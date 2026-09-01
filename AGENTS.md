@@ -9,9 +9,10 @@
   - `nimbus.lists` / `nimbus.categories`
 - Scenic Background Elements:
   - Sky gradient and twinkling night stars layer (`.stars-layer`, `.stars--sm`, `.stars--lg`)
-  - Volumetric storm/nimbus cloud formations (`.clouds-layer`, `.nimbus-cloud`, `.nimbus-lobe`)
+  - Dynamic procedural volumetric nimbus clouds drifting continuously left-to-right (`.clouds-layer`, `.nimbus-cloud`, `.nimbus-lobe`, with randomized shapes, lobe counts, altitudes, and capped slow drift speeds)
   - Smooth deep ocean water layer (`.ocean-layer`, `.ocean-surface`)
-  - Coastline & Promontory SVG with Lighthouse, keeper's cottage, and coastal grassy knoll (`.coast-scene`, `.lighthouse-svg`)
+  - Soft horizon atmospheric haze (`.horizon-haze`)
+  - Coastline & Promontory SVG with Lighthouse, attached keeper's quarters, and coastal grassy knoll (`.coast-scene`, `.lighthouse-svg`)
   - Spherical glowing beacon light halo (`#f4b41a`) on the lighthouse lantern (`.beacon-halo-pulse`, `.beacon-core-pulse`)
 - Dark mode:
   - Toggled via `html.dark` class.

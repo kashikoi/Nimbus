@@ -55,122 +55,33 @@ body {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .nimbus-cloud {
   position: absolute;
+  top: 0;
+  left: 0;
   pointer-events: none;
+  will-change: transform;
 }
 
 .nimbus-lobe {
   position: absolute;
   border-radius: 50%;
-  filter: blur(16px);
+  filter: blur(18px);
   opacity: 0.88;
+  background: radial-gradient(circle at 45% 35%, #ffffff 0%, #e1ebf4 48%, #b2c5d6 85%, transparent 100%);
+  box-shadow: 35px 25px 60px rgba(120, 140, 165, 0.3);
 }
 
-/* Left billowy cloud bank */
-.nimbus-cloud--left {
-  top: 1%;
-  left: -6%;
-  width: 580px;
-  height: 440px;
-  animation: cloudSwayLeft 45s ease-in-out infinite alternate;
+.nimbus-lobe--alt1 {
+  background: radial-gradient(circle at 40% 30%, #f8fbfe 0%, #d5e2f0 52%, #a4bbd0 90%, transparent 100%);
+  box-shadow: 30px 35px 70px rgba(110, 130, 155, 0.28);
 }
 
-.nimbus-cloud--left .nimbus-lobe--1 {
-  width: 320px;
-  height: 240px;
-  top: 15%;
-  left: 20%;
-  background: radial-gradient(circle at 45% 35%, #ffffff 0%, #e1ebf4 50%, #b5c7d8 85%, transparent 100%);
-  box-shadow: 40px 30px 60px rgba(120, 140, 165, 0.35);
-}
-
-.nimbus-cloud--left .nimbus-lobe--2 {
-  width: 280px;
-  height: 220px;
-  top: 35%;
-  left: 45%;
-  background: radial-gradient(circle at 40% 30%, #f8fbfe 0%, #d5e2f0 55%, #a6bcd0 90%, transparent 100%);
-  box-shadow: 30px 40px 70px rgba(110, 130, 155, 0.3);
-}
-
-.nimbus-cloud--left .nimbus-lobe--3 {
-  width: 250px;
-  height: 190px;
-  top: 5%;
-  left: 35%;
-  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #e6f0f8 45%, #bed0e0 80%, transparent 100%);
-}
-
-.nimbus-cloud--left .nimbus-lobe--4 {
-  width: 380px;
-  height: 260px;
-  top: 30%;
-  left: 0%;
-  background: radial-gradient(circle at 45% 40%, #edf4fa 0%, #cbd9e8 50%, #9cb2c8 85%, transparent 100%);
-}
-
-/* Right massive storm cloud formation */
-.nimbus-cloud--right {
-  top: 3%;
-  right: -8%;
-  width: 680px;
-  height: 520px;
-  animation: cloudSwayRight 55s ease-in-out infinite alternate;
-}
-
-.nimbus-cloud--right .nimbus-lobe--1 {
-  width: 360px;
-  height: 280px;
-  top: 10%;
-  right: 25%;
-  background: radial-gradient(circle at 55% 35%, #ffffff 0%, #e2ecf6 45%, #b2c5d6 85%, transparent 100%);
-  box-shadow: -50px 40px 80px rgba(120, 140, 165, 0.35);
-}
-
-.nimbus-cloud--right .nimbus-lobe--2 {
-  width: 300px;
-  height: 240px;
-  top: 30%;
-  right: 48%;
-  background: radial-gradient(circle at 45% 30%, #f7fafe 0%, #d4e2f0 50%, #a4bbd0 90%, transparent 100%);
-}
-
-.nimbus-cloud--right .nimbus-lobe--3 {
-  width: 320px;
-  height: 260px;
-  top: 40%;
-  right: 10%;
-  background: radial-gradient(circle at 50% 40%, #eef5fb 0%, #cbd9e8 50%, #98b0c6 85%, transparent 100%);
-  box-shadow: -40px 50px 90px rgba(105, 125, 150, 0.3);
-}
-
-.nimbus-cloud--right .nimbus-lobe--4 {
-  width: 240px;
-  height: 190px;
-  top: 0%;
-  right: 40%;
-  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #e8f1f8 40%, #bdd0e2 80%, transparent 100%);
-}
-
-.nimbus-cloud--right .nimbus-lobe--5 {
-  width: 260px;
-  height: 180px;
-  top: 55%;
-  right: 30%;
-  background: radial-gradient(circle at 50% 45%, #dfeaf4 0%, #baccdb 55%, #8fa8be 90%, transparent 100%);
-}
-
-@keyframes cloudSwayLeft {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(25px, 15px) scale(1.03); }
-}
-
-@keyframes cloudSwayRight {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-30px, 18px) scale(1.04); }
+.nimbus-lobe--alt2 {
+  background: radial-gradient(circle at 50% 38%, #edf4fa 0%, #cbd9e8 50%, #9cb2c8 85%, transparent 100%);
 }
 
 /* Ocean Layer */
