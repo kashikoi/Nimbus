@@ -303,7 +303,7 @@ body {
   filter: drop-shadow(0 15px 25px rgba(15, 28, 45, 0.45));
 }
 
-/* Volumetric Beacon Light Layer */
+/* Spherical Glowing Beacon Layer */
 .beacon-beam-layer {
   position: absolute;
   inset: 0;
@@ -312,28 +312,7 @@ body {
   overflow: hidden;
 }
 
-/* Volumetric Light Beam Cone spanning across ocean */
-.beacon-light-cone {
-  position: absolute;
-  left: min(190px, 18vw);
-  bottom: min(340px, 36vh);
-  width: 120vw;
-  height: min(220px, 24vh);
-  background: linear-gradient(90deg, 
-    rgba(255, 250, 220, 0.95) 0%, 
-    rgba(244, 180, 26, 0.75) 12%, 
-    rgba(244, 180, 26, 0.3) 40%, 
-    rgba(244, 180, 26, 0.08) 75%, 
-    transparent 100%
-  );
-  clip-path: polygon(0% 48%, 100% 0%, 100% 100%, 0% 52%);
-  transform-origin: 0% 50%;
-  mix-blend-mode: screen;
-  filter: blur(10px);
-  animation: beaconSweep 7s ease-in-out infinite alternate;
-}
-
-/* Ambient Beacon Glow Halo */
+/* Ambient Spherical Beacon Glow Halo */
 .beacon-glow-halo {
   position: absolute;
   left: calc(min(190px, 18vw) - 140px);
@@ -350,21 +329,6 @@ body {
   filter: blur(8px);
   mix-blend-mode: screen;
   animation: haloPulse 3.5s ease-in-out infinite alternate;
-}
-
-@keyframes beaconSweep {
-  0% {
-    opacity: 0.75;
-    transform: rotate(-1deg);
-  }
-  50% {
-    opacity: 0.95;
-    transform: rotate(1.2deg);
-  }
-  100% {
-    opacity: 0.8;
-    transform: rotate(-0.5deg);
-  }
 }
 
 @keyframes haloPulse {

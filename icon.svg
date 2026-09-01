@@ -36,9 +36,8 @@
   <!-- Rocky Headland -->
   <path d="M 0 450 Q 80 430 140 460 Q 180 480 240 490 L 240 512 L 0 512 Z" fill="#293241"/>
 
-  <!-- Lighthouse Beam -->
-  <polygon points="120,225 480,180 480,280" fill="url(#beamGrad)" opacity="0.8"/>
-  <circle cx="120" cy="225" r="28" fill="url(#beaconGlow)"/>
+  <!-- Lighthouse Spherical Glow -->
+  <circle cx="120" cy="225" r="32" fill="url(#beaconGlow)"/>
 
   <!-- Lighthouse -->
   <!-- Cottage -->

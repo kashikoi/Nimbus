@@ -13,7 +13,7 @@
   - Multi-tier ocean swell with ripple textures (`.ocean-layer`, `.ocean-surface`, `.ocean-ripple-texture`, `.ocean-waves`)
   - Luminous atmospheric horizon mist (`.horizon-mist`)
   - Coastline & Promontory SVG with Lighthouse and keeper's cottage (`.coast-scene`, `.lighthouse-svg`)
-  - Volumetric warm golden beacon light beam (`#f4b41a`) casting across the sea (`.beacon-beam-layer`, `.beacon-light-cone`, `.beacon-glow-halo`)
+  - Spherical glowing beacon light halo (`#f4b41a`) on the lighthouse lantern (`.beacon-beam-layer`, `.beacon-glow-halo`, `.beacon-core-pulse`)
 - Dark mode:
   - Toggled via `html.dark` class.
   - Head script in `index.html` checks `localStorage.getItem("nimbus.theme") === "dark"` synchronously to prevent FOUC.
