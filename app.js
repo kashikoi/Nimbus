@@ -59,6 +59,11 @@
     localStorage.setItem("nimbus.tasks", JSON.stringify(tasks));
   }
 
+  function fitActionHeight(textarea) {
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
   function loadGroups() {
     try {
       const savedGroups = JSON.parse(localStorage.getItem("nimbus.groups") || "[]");
@@ -125,11 +130,11 @@
         check.checked = Boolean(task.done);
         check.setAttribute("aria-label", `Mark ${task.text || "action"} as done`);
 
-        const text = document.createElement("input");
+        const text = document.createElement("textarea");
         text.className = "task-card__text";
-        text.type = "text";
         text.value = task.text;
         text.placeholder = "New action";
+        text.rows = 1;
         text.dataset.taskText = task.id;
         text.setAttribute("aria-label", "Action text");
 
@@ -142,6 +147,7 @@
 
         card.append(text, deleteButton, check);
         list.appendChild(card);
+        fitActionHeight(text);
       });
     });
   }
@@ -578,6 +584,11 @@
   if (deleteGroupTasksBtn) deleteGroupTasksBtn.addEventListener("click", () => deleteGroup(false));
 
   if (app) {
+    app.addEventListener("input", (event) => {
+      const taskText = event.target.closest("[data-task-text]");
+      if (taskText) fitActionHeight(taskText);
+    });
+
     app.addEventListener("focusout", (event) => {
       const taskText = event.target.closest("[data-task-text]");
       if (taskText) {
@@ -602,11 +613,10 @@
     });
 
     app.addEventListener("keydown", (event) => {
-      const editable = event.target.closest("[data-task-text], [data-group-name]");
-      if (!editable) return;
-      if (event.key === "Enter") {
+      const groupName = event.target.closest("[data-group-name]");
+      if (groupName && event.key === "Enter") {
         event.preventDefault();
-        editable.blur();
+        groupName.blur();
       }
     });
 

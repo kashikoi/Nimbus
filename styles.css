@@ -516,6 +516,11 @@ body {
   font: inherit;
 }
 
+[data-task-text] {
+  resize: none;
+  overflow: hidden;
+}
+
 [data-task-text]::placeholder,
 [data-group-name]::placeholder {
   color: var(--muted);
