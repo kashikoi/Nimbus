@@ -195,54 +195,6 @@ body {
   );
 }
 
-/* Multi-layered wave patterns with shimmer and swell */
-.ocean-waves {
-  position: absolute;
-  inset: 0;
-  background-repeat: repeat-x;
-  pointer-events: none;
-}
-
-.ocean-waves--back {
-  opacity: 0.25;
-  background-image: radial-gradient(ellipse 70px 10px at 50% 50%, rgba(255, 255, 255, 0.35), transparent 75%);
-  background-size: 80px 16px;
-  animation: waveDriftBack 20s linear infinite;
-}
-
-.ocean-waves--mid {
-  opacity: 0.35;
-  background-image: 
-    radial-gradient(ellipse 120px 14px at 50% 50%, rgba(255, 255, 255, 0.3), transparent 75%),
-    linear-gradient(180deg, transparent 50%, rgba(20, 35, 52, 0.2) 100%);
-  background-size: 140px 24px;
-  animation: waveDriftMid 14s linear infinite;
-}
-
-.ocean-waves--front {
-  opacity: 0.45;
-  background-image: 
-    radial-gradient(ellipse 220px 20px at 50% 50%, rgba(255, 255, 255, 0.4), transparent 80%),
-    radial-gradient(ellipse 180px 16px at 30% 60%, rgba(255, 255, 255, 0.25), transparent 75%);
-  background-size: 260px 42px;
-  animation: waveDriftFront 10s linear infinite;
-}
-
-@keyframes waveDriftBack {
-  0% { background-position-x: 0; }
-  100% { background-position-x: 80px; }
-}
-
-@keyframes waveDriftMid {
-  0% { background-position-x: 0; }
-  100% { background-position-x: -140px; }
-}
-
-@keyframes waveDriftFront {
-  0% { background-position-x: 0; }
-  100% { background-position-x: 260px; }
-}
-
 /* Coast & Lighthouse SVG Container */
 .coast-scene {
   position: absolute;
@@ -682,18 +634,6 @@ html.dark .ocean-surface {
     #09101a 80%, 
     #050a12 100%
   );
-}
-
-html.dark .ocean-waves--back {
-  opacity: 0.15;
-}
-
-html.dark .ocean-waves--mid {
-  opacity: 0.2;
-}
-
-html.dark .ocean-waves--front {
-  opacity: 0.25;
 }
 
 html.dark .app__title {

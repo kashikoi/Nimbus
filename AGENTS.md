@@ -10,10 +10,9 @@
 - Scenic Background Elements:
   - Sky gradient and twinkling night stars layer (`.stars-layer`, `.stars--sm`, `.stars--lg`)
   - Volumetric storm/nimbus cloud formations (`.clouds-layer`, `.nimbus-cloud`, `.nimbus-lobe`)
-  - Multi-tier ocean swell with ripple textures (`.ocean-layer`, `.ocean-surface`, `.ocean-ripple-texture`, `.ocean-waves`)
-  - Luminous atmospheric horizon mist (`.horizon-mist`)
-  - Coastline & Promontory SVG with Lighthouse and keeper's cottage (`.coast-scene`, `.lighthouse-svg`)
-  - Spherical glowing beacon light halo (`#f4b41a`) on the lighthouse lantern (`.beacon-beam-layer`, `.beacon-glow-halo`, `.beacon-core-pulse`)
+  - Smooth deep ocean water layer (`.ocean-layer`, `.ocean-surface`)
+  - Coastline & Promontory SVG with Lighthouse, keeper's cottage, and coastal grassy knoll (`.coast-scene`, `.lighthouse-svg`)
+  - Spherical glowing beacon light halo (`#f4b41a`) on the lighthouse lantern (`.beacon-halo-pulse`, `.beacon-core-pulse`)
 - Dark mode:
   - Toggled via `html.dark` class.
   - Head script in `index.html` checks `localStorage.getItem("nimbus.theme") === "dark"` synchronously to prevent FOUC.
