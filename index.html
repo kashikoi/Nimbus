@@ -119,20 +119,18 @@
             <stop offset="100%" stop-color="#7a1414" />
           </linearGradient>
 
-          <!-- Beacon Core Spherical Glow -->
+          <!-- Beacon Core Spherical Glow (Soft & Subtle) -->
           <radialGradient id="beaconCoreGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-            <stop offset="20%" stop-color="#fff8db" stop-opacity="0.95" />
-            <stop offset="50%" stop-color="#f4b41a" stop-opacity="0.85" />
-            <stop offset="80%" stop-color="#f4b41a" stop-opacity="0.35" />
+            <stop offset="0%" stop-color="#fff6db" stop-opacity="0.75" />
+            <stop offset="30%" stop-color="#f4b41a" stop-opacity="0.45" />
+            <stop offset="70%" stop-color="#f4b41a" stop-opacity="0.15" />
             <stop offset="100%" stop-color="#f4b41a" stop-opacity="0" />
           </radialGradient>
 
-          <!-- Ambient Halo Glow -->
+          <!-- Ambient Halo Glow (Gentle warmth) -->
           <radialGradient id="beaconAmbientGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#f4b41a" stop-opacity="0.45" />
-            <stop offset="45%" stop-color="#f4b41a" stop-opacity="0.2" />
-            <stop offset="80%" stop-color="#f4b41a" stop-opacity="0.05" />
+            <stop offset="0%" stop-color="#f4b41a" stop-opacity="0.2" />
+            <stop offset="50%" stop-color="#f4b41a" stop-opacity="0.06" />
             <stop offset="100%" stop-color="#f4b41a" stop-opacity="0" />
           </radialGradient>
         </defs>
@@ -252,13 +250,13 @@
         <circle cx="246" cy="128" r="3.5" fill="#1e293b" />
         <line x1="246" y1="128" x2="246" y2="118" stroke="#1e293b" stroke-width="2" />
 
-        <!-- Spherical Glowing Golden Beacon Light -->
+        <!-- Spherical Glowing Golden Beacon Light (Gentle & Atmospheric) -->
         <!-- Ambient Halo -->
-        <circle cx="246" cy="166" r="140" fill="url(#beaconAmbientGlow)" class="beacon-halo-pulse" />
+        <circle cx="246" cy="166" r="85" fill="url(#beaconAmbientGlow)" class="beacon-halo-pulse" />
         <!-- Radiant Inner Core Glow -->
-        <circle cx="246" cy="166" r="46" fill="url(#beaconCoreGlow)" class="beacon-core-pulse" />
-        <!-- White Hot Lamp Filament Bulb -->
-        <circle cx="246" cy="166" r="8" fill="#ffffff" />
+        <circle cx="246" cy="166" r="32" fill="url(#beaconCoreGlow)" class="beacon-core-pulse" />
+        <!-- Soft Warm Lamp Filament Bulb -->
+        <circle cx="246" cy="166" r="4.5" fill="#fff5d1" opacity="0.85" />
       </svg>
     </div>
   </div>
