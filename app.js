@@ -28,7 +28,10 @@
   const groupDeleteMessage = document.getElementById("group-delete-message");
   const moveGroupTasksBtn = document.getElementById("move-group-tasks-btn");
   const deleteGroupTasksBtn = document.getElementById("delete-group-tasks-btn");
+  const moveActionModal = document.getElementById("move-action-modal");
+  const moveActionList = document.getElementById("move-action-list");
   const WEEKDAYS = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
+  const isMobile = window.matchMedia("(pointer: coarse), (max-width: 720px)");
   let draggedTaskId = null;
   let taskDropCommitted = false;
   let draggedGroupId = null;
@@ -38,6 +41,14 @@
   let tasks = loadTasks();
   let groups = loadGroups();
   let groupPendingDeletion = null;
+  let actionPendingMove = null;
+
+  function updateMobileMode() {
+    document.documentElement.classList.toggle("mobile", isMobile.matches);
+  }
+
+  updateMobileMode();
+  isMobile.addEventListener("change", updateMobileMode);
 
   if (tasks.some((task) => task.day === "backlog")) {
     tasks.forEach((task) => {
@@ -145,7 +156,13 @@
         deleteButton.title = "Delete to-do";
         deleteButton.setAttribute("aria-label", `Delete ${task.text || "action"}`);
 
-        card.append(text, deleteButton, check);
+        const moveButton = document.createElement("button");
+        moveButton.className = "task-card__move";
+        moveButton.type = "button";
+        moveButton.textContent = "Move";
+        moveButton.setAttribute("aria-label", `Move ${task.text || "action"}`);
+
+        card.append(text, moveButton, deleteButton, check);
         list.appendChild(card);
         fitActionHeight(text);
       });
@@ -207,6 +224,44 @@
   function closeGroupDeleteModal() {
     groupDeleteModal.hidden = true;
     groupPendingDeletion = null;
+  }
+
+  function openMoveActionModal(taskId) {
+    const task = tasks.find((item) => item.id === taskId);
+    if (!task) return;
+    actionPendingMove = taskId;
+    const currentLocation = task.day || "unassigned";
+    const destinations = [
+      { id: "unassigned", label: "To-Dos" },
+      ...WEEKDAYS.map((day) => ({ id: day, label: day[0].toUpperCase() + day.slice(1) })),
+      ...groups.map((group) => ({ id: group.id, label: group.name || "New group" })),
+    ];
+    moveActionList.replaceChildren();
+    destinations.forEach((destination) => {
+      const button = document.createElement("button");
+      button.className = "move-action-list__option";
+      button.type = "button";
+      button.dataset.moveTo = destination.id;
+      button.textContent = destination.label;
+      button.disabled = destination.id === currentLocation;
+      moveActionList.appendChild(button);
+    });
+    moveActionModal.hidden = false;
+  }
+
+  function closeMoveActionModal() {
+    moveActionModal.hidden = true;
+    actionPendingMove = null;
+  }
+
+  function moveActionTo(location) {
+    if (!actionPendingMove) return;
+    const task = tasks.find((item) => item.id === actionPendingMove);
+    if (!task) return;
+    task.day = location === "unassigned" ? null : location;
+    saveTasks();
+    renderTasks();
+    closeMoveActionModal();
   }
 
   function deleteGroup(moveTasks) {
@@ -582,6 +637,12 @@
   }
   if (moveGroupTasksBtn) moveGroupTasksBtn.addEventListener("click", () => deleteGroup(true));
   if (deleteGroupTasksBtn) deleteGroupTasksBtn.addEventListener("click", () => deleteGroup(false));
+  if (moveActionList) {
+    moveActionList.addEventListener("click", (event) => {
+      const option = event.target.closest("[data-move-to]");
+      if (option) moveActionTo(option.dataset.moveTo);
+    });
+  }
 
   if (app) {
     app.addEventListener("input", (event) => {
@@ -621,6 +682,11 @@
     });
 
     app.addEventListener("click", (event) => {
+      const moveButton = event.target.closest(".task-card__move");
+      if (moveButton) {
+        openMoveActionModal(moveButton.closest(".task-card").dataset.taskId);
+        return;
+      }
       const groupDeleteButton = event.target.closest(".custom-group__delete");
       if (groupDeleteButton) {
         openGroupDeleteModal(groupDeleteButton.closest(".custom-group").dataset.groupId);
@@ -738,6 +804,9 @@
     if (e.target.matches("[data-close-group-delete]")) {
       closeGroupDeleteModal();
     }
+    if (e.target.matches("[data-close-move-action]")) {
+      closeMoveActionModal();
+    }
   });
 
   document.addEventListener("keydown", (e) => {
@@ -752,6 +821,9 @@
     }
     if (e.key === "Escape" && groupDeleteModal && !groupDeleteModal.hidden) {
       closeGroupDeleteModal();
+    }
+    if (e.key === "Escape" && moveActionModal && !moveActionModal.hidden) {
+      closeMoveActionModal();
     }
   });
 

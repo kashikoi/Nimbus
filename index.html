@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nimbus</title>
   <meta name="theme-color" content="#7ec0ee" />
-  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01.47" />
-  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01.47" />
-  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01.47" />
-  <link rel="stylesheet" href="styles.css?v=2026.09.01.47" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01.49" />
+  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01.49" />
+  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01.49" />
+  <link rel="stylesheet" href="styles.css?v=2026.09.01.49" />
   <script>
     // Set theme class before first paint to prevent flash
     try {
@@ -263,7 +263,7 @@
   <main class="app">
     <header class="app__header">
       <div class="brand">
-        <img class="brand__mark" src="icon.svg?v=2026.09.01.47" alt="Nimbus icon" width="56" height="56" />
+        <img class="brand__mark" src="icon.svg?v=2026.09.01.49" alt="Nimbus icon" width="56" height="56" />
         <div class="brand__text">
           <h1 class="app__title">Nimbus</h1>
           <p class="app__subtitle">Chart your course, one day at a time.</p>
@@ -393,6 +393,17 @@
     </div>
   </div>
 
+  <div class="modal" id="move-action-modal" hidden>
+    <div class="modal__backdrop" data-close-move-action></div>
+    <div class="modal__card move-action-modal__card" role="dialog" aria-modal="true" aria-labelledby="move-action-title">
+      <div class="modal__header">
+        <h2 class="modal__title" id="move-action-title">Move action</h2>
+        <button type="button" class="modal__close" data-close-move-action aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="move-action-list" id="move-action-list" aria-label="Choose a destination"></div>
+    </div>
+  </div>
+
   <!-- Settings Modal -->
   <div class="modal" id="settings-modal" hidden>
     <div class="modal__backdrop" data-close-settings></div>
@@ -432,6 +443,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=2026.09.01.47"></script>
+  <script src="app.js?v=2026.09.01.49"></script>
 </body>
 </html>
