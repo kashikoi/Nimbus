@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nimbus - Tutorial</title>
+  <meta name="theme-color" content="#7ec0ee" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01.44" />
+  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01.44" />
+  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01.44" />
+  <link rel="stylesheet" href="styles.css?v=2026.09.01.44" />
+  <link rel="stylesheet" href="tutorial.css?v=2026.09.01.44" />
+  <script>
+    try {
+      const pref = localStorage.getItem("nimbus.theme") || "night";
+      let activeMode = pref;
+      if (pref === "random") {
+        const cached = sessionStorage.getItem("nimbus.activeRandomTheme");
+        activeMode = ["day", "twilight", "night"].includes(cached) ? cached : "night";
+      }
+      if (activeMode === "night" || activeMode === "dark") document.documentElement.classList.add("night", "dark");
+      else if (activeMode === "twilight") document.documentElement.classList.add("twilight");
+    } catch (e) {}
+  </script>
+</head>
+<body class="tutorial-body">
+  <div class="scenic-bg" aria-hidden="true">
+    <div class="sky-backdrop">
+      <div class="celestial-body celestial-sun"><div class="sun-glow"></div><div class="sun-disc"></div></div>
+      <div class="celestial-body celestial-moon"><div class="moon-glow"></div><div class="moon-disc"><div class="moon-crater moon-crater--1"></div><div class="moon-crater moon-crater--2"></div><div class="moon-crater moon-crater--3"></div></div></div>
+      <div class="stars-layer"><div class="stars stars--sm"></div><div class="stars stars--lg"></div></div>
+    </div>
+    <div class="clouds-layer">
+      <div class="tutorial-cloud tutorial-cloud--1"><span></span><span></span><span></span><span></span></div>
+      <div class="tutorial-cloud tutorial-cloud--2"><span></span><span></span><span></span><span></span></div>
+      <div class="tutorial-cloud tutorial-cloud--3"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="ocean-layer"><div class="ocean-surface"></div></div>
+    <div class="horizon-haze"></div>
+  </div>
+
+  <main class="app tutorial">
+    <header class="app__header">
+      <div class="brand">
+        <img class="brand__mark" src="icon.svg?v=2026.09.01.44" alt="" width="56" height="56" />
+        <div class="brand__text">
+          <h1 class="app__title">Nimbus</h1>
+          <p class="app__subtitle">The 3-minute tour.</p>
+        </div>
+      </div>
+      <div class="app__datetime">
+        <div class="app__actions">
+          <button type="button" class="icon-btn" id="theme-toggle" title="Cycle atmosphere" aria-label="Cycle atmosphere">&#127769;</button>
+          <a class="btn btn--secondary tut-back" href="index.html">Back to app</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="tut-hero">
+      <div class="tut-hero__badge">Welcome aboard</div>
+      <h2 class="tut-hero__title">A calm weekly command deck for your real life.</h2>
+      <p class="tut-hero__text">
+        Nimbus is a local-first planner built around one practical rhythm: catch actions quickly,
+        schedule them into your Saturday-through-Friday week, and keep flexible groups for anything
+        that does not belong on the calendar yet. No accounts, no sync, no ceremony.
+      </p>
+    </section>
+
+    <nav class="tut-nav" aria-label="Jump to a topic">
+      <a href="#step-1">Add actions</a>
+      <a href="#step-2">Edit inline</a>
+      <a href="#step-3">Plan the week</a>
+      <a href="#step-4">Custom groups</a>
+      <a href="#step-5">Rearrange</a>
+      <a href="#step-6">Finish &amp; delete</a>
+      <a href="#step-7">Demo data</a>
+      <a href="#step-8">Backup</a>
+    </nav>
+
+    <ol class="tut-steps">
+      <li class="tut-step" id="step-1">
+        <div class="tut-step__num">1</div>
+        <div class="tut-step__body">
+          <h3>Capture an action fast</h3>
+          <p>
+            Use <strong>Add Action</strong> to drop a blank action into the top list. It starts
+            ready to type, so you can capture the thought first and decide where it belongs later.
+          </p>
+          <div class="tut-mini-board">
+            <div class="tut-mini-action">Add Action</div>
+            <div class="tut-mini-action">Add Group</div>
+          </div>
+        </div>
+      </li>
+
+      <li class="tut-step" id="step-2">
+        <div class="tut-step__num">2</div>
+        <div class="tut-step__body">
+          <h3>Edit where the words already are</h3>
+          <p>
+            Actions look like finished cards, but the text itself is editable. Click the words,
+            type the update, then press <strong>Enter</strong> or click away to save.
+          </p>
+          <p class="tut-note">Blank actions show a soft <strong>New action</strong> placeholder until you name them.</p>
+        </div>
+      </li>
+
+      <li class="tut-step" id="step-3">
+        <div class="tut-step__num">3</div>
+        <div class="tut-step__body">
+          <h3>Build a Saturday-first week</h3>
+          <p>
+            The week always starts with <strong>Saturday</strong> and runs through Friday. Each day
+            shows the current date on the right, and today gets a clear accent highlight.
+          </p>
+          <div class="tut-week-row"><span>Saturday</span><strong>Aug 29</strong></div>
+          <div class="tut-week-row tut-week-row--today"><span>Tuesday</span><strong>Sep 1</strong></div>
+        </div>
+      </li>
+
+      <li class="tut-step" id="step-4">
+        <div class="tut-step__num">4</div>
+        <div class="tut-step__body">
+          <h3>Create your own holding areas</h3>
+          <p>
+            Use <strong>Add Group</strong> to create a blank custom group below the week. Name it
+            inline, then drag actions into it for project buckets, errands, waiting-for items, or
+            anything you want to save outside the weekly plan.
+          </p>
+        </div>
+      </li>
+
+      <li class="tut-step" id="step-5">
+        <div class="tut-step__num">5</div>
+        <div class="tut-step__body">
+          <h3>Drag things until they feel right</h3>
+          <p>
+            Drag actions from To-Dos into a day or custom group. Drag within a list to reorder.
+            Nearby cards glide out of the way as you sort, and holding a dragged card near the top
+            or bottom edge scrolls the page for you.
+          </p>
+          <p class="tut-note">Custom group headers are draggable too, so your personal sections can be rearranged below the week.</p>
+        </div>
+      </li>
+
+      <li class="tut-step" id="step-6">
+        <div class="tut-step__num">6</div>
+        <div class="tut-step__body">
+          <h3>Check off, clean up, or remove a group</h3>
+          <p>
+            The round control on each card marks it done. The trash icon removes an action. Custom
+            groups have their own trash icon; when you delete one, Nimbus asks whether to move its
+            actions back to To-Dos or delete those actions with the group.
+          </p>
+        </div>
+      </li>
+
+      <li class="tut-step" id="step-7">
+        <div class="tut-step__num">7</div>
+        <div class="tut-step__body">
+          <h3>Try a realistic sample week</h3>
+          <p>
+            Open Settings and use <strong>Randomize data (demo)</strong> to load a lived-in sample:
+            unassigned actions, scheduled day cards, completed items, and a custom group. It is the
+            fastest way to see how Nimbus behaves once it has real texture.
+          </p>
+        </div>
+      </li>
+
+      <li class="tut-step" id="step-8">
+        <div class="tut-step__num">8</div>
+        <div class="tut-step__body">
+          <h3>Settings, backup, and atmosphere</h3>
+          <p>
+            Settings holds the atmosphere picker, export/import, demo data, and clear-data control.
+            Export saves your actions, custom groups, done states, order, and theme into one JSON file.
+          </p>
+        </div>
+      </li>
+    </ol>
+
+    <section class="tut-callout">
+      <h3>One important thing</h3>
+      <p>
+        Nimbus stores your planner only in this browser on this device. That keeps it private and
+        simple, but it also means browser-data cleanup can erase it. Export a backup from Settings
+        when your planner starts to matter.
+      </p>
+    </section>
+
+    <section class="tut-outro">
+      <h2>That is the whole flow.</h2>
+      <p>Capture the action, move it into the right sky lane, and keep going.</p>
+      <a class="btn btn--primary tut-outro__btn" href="index.html">Take me back</a>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const btn = document.getElementById("theme-toggle");
+      const modes = ["day", "twilight", "night"];
+      function apply(mode) {
+        document.documentElement.classList.remove("night", "dark", "twilight");
+        if (mode === "night") document.documentElement.classList.add("night", "dark");
+        else if (mode === "twilight") document.documentElement.classList.add("twilight");
+        try { localStorage.setItem("nimbus.theme", mode); } catch (e) {}
+        btn.textContent = mode === "night" ? "☀️" : mode === "twilight" ? "🌙" : "🌅";
+      }
+      btn.addEventListener("click", () => {
+        const current = document.documentElement.classList.contains("night") ? "night" : document.documentElement.classList.contains("twilight") ? "twilight" : "day";
+        apply(modes[(modes.indexOf(current) + 1) % modes.length]);
+      });
+    })();
+  </script>
+</body>
+</html>

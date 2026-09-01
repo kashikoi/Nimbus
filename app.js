@@ -62,9 +62,7 @@
   function loadGroups() {
     try {
       const savedGroups = JSON.parse(localStorage.getItem("nimbus.groups") || "[]");
-      return Array.isArray(savedGroups)
-        ? savedGroups.filter((group) => group && typeof group.id === "string" && typeof group.name === "string" && group.name.trim())
-        : [];
+      return Array.isArray(savedGroups) ? savedGroups.filter((group) => group && typeof group.id === "string" && typeof group.name === "string") : [];
     } catch (error) {
       return [];
     }
@@ -86,21 +84,25 @@
       heading.className = "custom-group__heading";
       heading.draggable = true;
       heading.title = "Drag to reorder group";
-      const title = document.createElement("h2");
-      title.className = "day-group__title";
-      title.textContent = group.name;
+      const title = document.createElement("input");
+      title.className = "day-group__title custom-group__name";
+      title.type = "text";
+      title.value = group.name;
+      title.placeholder = "New group";
+      title.dataset.groupName = group.id;
+      title.setAttribute("aria-label", "Group name");
       const deleteButton = document.createElement("button");
       deleteButton.className = "custom-group__delete";
       deleteButton.type = "button";
       deleteButton.textContent = "🗑";
       deleteButton.title = "Delete group";
-      deleteButton.setAttribute("aria-label", `Delete ${group.name}`);
+      deleteButton.setAttribute("aria-label", `Delete ${group.name || "group"}`);
       heading.append(title, deleteButton);
 
       const list = document.createElement("div");
       list.className = "task-list";
       list.dataset.list = group.id;
-      list.setAttribute("aria-label", `${group.name} to-dos`);
+      list.setAttribute("aria-label", `${group.name || "New group"} to-dos`);
       section.append(heading, list);
       customGroups.appendChild(section);
     });
@@ -121,18 +123,22 @@
         check.className = "task-card__check";
         check.type = "checkbox";
         check.checked = Boolean(task.done);
-        check.setAttribute("aria-label", `Mark ${task.text} as done`);
+        check.setAttribute("aria-label", `Mark ${task.text || "action"} as done`);
 
-        const text = document.createElement("span");
+        const text = document.createElement("input");
         text.className = "task-card__text";
-        text.textContent = task.text;
+        text.type = "text";
+        text.value = task.text;
+        text.placeholder = "New action";
+        text.dataset.taskText = task.id;
+        text.setAttribute("aria-label", "Action text");
 
         const deleteButton = document.createElement("button");
         deleteButton.className = "task-card__delete";
         deleteButton.type = "button";
         deleteButton.textContent = "🗑";
         deleteButton.title = "Delete to-do";
-        deleteButton.setAttribute("aria-label", `Delete ${task.text}`);
+        deleteButton.setAttribute("aria-label", `Delete ${task.text || "action"}`);
 
         card.append(text, deleteButton, check);
         list.appendChild(card);
@@ -150,6 +156,21 @@
     todoForm.reset();
   }
 
+  function focusEditable(selector) {
+    const editable = document.querySelector(selector);
+    if (!editable) return;
+    editable.focus();
+    editable.select();
+  }
+
+  function addBlankTask() {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    tasks.push({ id, text: "", done: false, day: null });
+    saveTasks();
+    renderTasks();
+    focusEditable(`[data-task-text="${id}"]`);
+  }
+
   function openGroupModal() {
     groupModal.hidden = false;
     groupInput.focus();
@@ -158,6 +179,15 @@
   function closeGroupModal() {
     groupModal.hidden = true;
     groupForm.reset();
+  }
+
+  function addBlankGroup() {
+    const id = `group-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    groups.push({ id, name: "" });
+    saveGroups();
+    renderGroups();
+    renderTasks();
+    focusEditable(`[data-group-name="${id}"]`);
   }
 
   function openGroupDeleteModal(groupId) {
@@ -519,8 +549,8 @@
   }
   if (randomizeDataBtn) randomizeDataBtn.addEventListener("click", randomizeDemoData);
   if (clearDataBtn) clearDataBtn.addEventListener("click", clearData);
-  if (addTodoBtn) addTodoBtn.addEventListener("click", openTodoModal);
-  if (addGroupBtn) addGroupBtn.addEventListener("click", openGroupModal);
+  if (addTodoBtn) addTodoBtn.addEventListener("click", addBlankTask);
+  if (addGroupBtn) addGroupBtn.addEventListener("click", addBlankGroup);
   if (todoForm) {
     todoForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -548,6 +578,38 @@
   if (deleteGroupTasksBtn) deleteGroupTasksBtn.addEventListener("click", () => deleteGroup(false));
 
   if (app) {
+    app.addEventListener("focusout", (event) => {
+      const taskText = event.target.closest("[data-task-text]");
+      if (taskText) {
+        const task = tasks.find((item) => item.id === taskText.dataset.taskText);
+        if (task) {
+          task.text = taskText.value.trim();
+          saveTasks();
+        }
+        return;
+      }
+
+      const groupName = event.target.closest("[data-group-name]");
+      if (groupName) {
+        const group = groups.find((item) => item.id === groupName.dataset.groupName);
+        if (group) {
+          group.name = groupName.value.trim();
+          saveGroups();
+          renderGroups();
+          renderTasks();
+        }
+      }
+    });
+
+    app.addEventListener("keydown", (event) => {
+      const editable = event.target.closest("[data-task-text], [data-group-name]");
+      if (!editable) return;
+      if (event.key === "Enter") {
+        event.preventDefault();
+        editable.blur();
+      }
+    });
+
     app.addEventListener("click", (event) => {
       const groupDeleteButton = event.target.closest(".custom-group__delete");
       if (groupDeleteButton) {
@@ -574,7 +636,7 @@
 
     app.addEventListener("dragstart", (event) => {
       const groupHeading = event.target.closest(".custom-group__heading");
-      if (groupHeading && !event.target.closest("button")) {
+      if (groupHeading && !event.target.closest("button, input")) {
         const group = groupHeading.closest(".custom-group");
         draggedGroupId = group.dataset.groupId;
         groupDropCommitted = false;
