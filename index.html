@@ -10,9 +10,20 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
   <script>
-    // Set theme class before first paint to prevent light-mode flash
+    // Set theme class before first paint to prevent flash
     try {
-      if (localStorage.getItem("nimbus.theme") === "dark") document.documentElement.classList.add("dark");
+      let pref = localStorage.getItem("nimbus.theme") || "night";
+      let activeMode = pref;
+      if (pref === "random") {
+        const modes = ["day", "twilight", "night"];
+        activeMode = modes[Math.floor(Math.random() * modes.length)];
+        sessionStorage.setItem("nimbus.activeRandomTheme", activeMode);
+      }
+      if (activeMode === "night" || activeMode === "dark") {
+        document.documentElement.classList.add("night", "dark");
+      } else if (activeMode === "twilight") {
+        document.documentElement.classList.add("twilight");
+      }
     } catch (e) {}
   </script>
 </head>
@@ -287,12 +298,17 @@
       </div>
       <div class="settings-content">
         <div class="settings-group">
-          <div class="settings-row">
+          <div class="settings-row settings-row--stacked">
             <div>
-              <div class="settings-row__label">Appearance</div>
-              <div class="settings-row__desc">Switch between light sky and night sky</div>
+              <div class="settings-row__label">Atmosphere</div>
+              <div class="settings-row__desc">Choose your sky or let it randomize on each visit</div>
             </div>
-            <button type="button" class="btn btn--secondary" id="theme-toggle-btn">&#127769; Dark mode</button>
+            <div class="theme-picker" id="theme-picker" role="radiogroup" aria-label="Sky Atmosphere">
+              <button type="button" class="theme-chip" data-theme-val="day" title="Day">&#9728;&#65039; Day</button>
+              <button type="button" class="theme-chip" data-theme-val="twilight" title="Twilight">&#127749; Twilight</button>
+              <button type="button" class="theme-chip" data-theme-val="night" title="Night">&#127769; Night</button>
+              <button type="button" class="theme-chip" data-theme-val="random" title="Random on each visit">&#127922; Random</button>
+            </div>
           </div>
         </div>
         <div class="settings-divider"></div>
