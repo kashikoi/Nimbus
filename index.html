@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nimbus</title>
+  <meta name="theme-color" content="#7ec0ee" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Set theme class before first paint to prevent light-mode flash
+    try {
+      if (localStorage.getItem("nimbus.theme") === "dark") document.documentElement.classList.add("dark");
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <!-- Ambient Scenic Background: Ocean, Nimbus Storm Clouds, Fog & Lighthouse with Glowing Beacon -->
+  <div class="scenic-bg" aria-hidden="true">
+    <!-- Sky Layer -->
+    <div class="sky-backdrop">
+      <div class="stars-layer">
+        <div class="stars stars--sm"></div>
+        <div class="stars stars--lg"></div>
+      </div>
+    </div>
+
+    <!-- Nimbus Storm Clouds Layer (Multi-lobed Volumetric Formations) -->
+    <div class="clouds-layer">
+      <!-- Left Nimbus Formation -->
+      <div class="nimbus-cloud nimbus-cloud--left">
+        <span class="nimbus-lobe nimbus-lobe--1"></span>
+        <span class="nimbus-lobe nimbus-lobe--2"></span>
+        <span class="nimbus-lobe nimbus-lobe--3"></span>
+        <span class="nimbus-lobe nimbus-lobe--4"></span>
+      </div>
+
+      <!-- Right Nimbus Formation -->
+      <div class="nimbus-cloud nimbus-cloud--right">
+        <span class="nimbus-lobe nimbus-lobe--1"></span>
+        <span class="nimbus-lobe nimbus-lobe--2"></span>
+        <span class="nimbus-lobe nimbus-lobe--3"></span>
+        <span class="nimbus-lobe nimbus-lobe--4"></span>
+        <span class="nimbus-lobe nimbus-lobe--5"></span>
+      </div>
+
+      <!-- High Atmospheric Cloud Shroud -->
+      <div class="nimbus-cloud nimbus-cloud--top"></div>
+    </div>
+
+    <!-- Ocean Surface Layer -->
+    <div class="ocean-layer">
+      <div class="ocean-surface"></div>
+      <div class="ocean-ripple-texture"></div>
+      <div class="ocean-waves ocean-waves--back"></div>
+      <div class="ocean-waves ocean-waves--mid"></div>
+      <div class="ocean-waves ocean-waves--front"></div>
+    </div>
+
+    <!-- Horizon Mist & Atmospheric Fog -->
+    <div class="horizon-mist"></div>
+
+    <!-- Volumetric Beacon Light Beam spanning across the ocean -->
+    <div class="beacon-beam-layer">
+      <div class="beacon-glow-halo"></div>
+      <div class="beacon-light-cone"></div>
+    </div>
+
+    <!-- Coastline & Lighthouse Scene (Anchored to Bottom-Left) -->
+    <div class="coast-scene">
+      <svg class="lighthouse-svg" viewBox="0 0 500 650" preserveAspectRatio="xMinYMax meet" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Rock Shadow Gradient -->
+          <linearGradient id="rockGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#4a5568" />
+            <stop offset="35%" stop-color="#2d3748" />
+            <stop offset="75%" stop-color="#1a202c" />
+            <stop offset="100%" stop-color="#0f141c" />
+          </linearGradient>
+
+          <!-- Rock Highlight Gradient -->
+          <linearGradient id="rockHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8c9cb0" stop-opacity="0.9" />
+            <stop offset="60%" stop-color="#4a5568" stop-opacity="0.4" />
+            <stop offset="100%" stop-color="#2d3748" stop-opacity="0.1" />
+          </linearGradient>
+
+          <!-- Surf / Foam Gradient -->
+          <linearGradient id="foamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+            <stop offset="50%" stop-color="#e2e8f0" stop-opacity="0.8" />
+            <stop offset="100%" stop-color="#cbd5e0" stop-opacity="0.3" />
+          </linearGradient>
+
+          <!-- Lighthouse Tower Gradient -->
+          <linearGradient id="towerWhiteGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffffff" />
+            <stop offset="60%" stop-color="#edf2f7" />
+            <stop offset="100%" stop-color="#cbd5e0" />
+          </linearGradient>
+
+          <!-- Tower Red Band Gradient -->
+          <linearGradient id="towerRedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#d93838" />
+            <stop offset="60%" stop-color="#b91c1c" />
+            <stop offset="100%" stop-color="#7f1d1d" />
+          </linearGradient>
+
+          <!-- Beacon Glow -->
+          <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" />
+            <stop offset="25%" stop-color="#fff3b0" stop-opacity="0.95" />
+            <stop offset="65%" stop-color="#f4b41a" stop-opacity="0.75" />
+            <stop offset="100%" stop-color="#f4b41a" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <!-- Distant Coastal Rocks in Water -->
+        <path d="M 0 460 Q 90 435 180 450 Q 270 465 360 480 Q 430 495 500 515 L 500 650 L 0 650 Z" fill="#2d3748" opacity="0.6" />
+        <path d="M 40 462 Q 130 450 230 468 Q 340 485 460 515" fill="none" stroke="url(#foamGrad)" stroke-width="3" stroke-linecap="round" opacity="0.65" />
+
+        <!-- Main Rocky Headland / Promontory -->
+        <path d="M 0 425 
+                 C 55 405, 120 420, 165 432 
+                 C 220 445, 265 425, 320 452 
+                 C 375 480, 430 520, 480 575 
+                 L 480 650 L 0 650 Z" 
+              fill="url(#rockGrad)" />
+
+        <!-- Rock Crags and Geological Textures -->
+        <path d="M 35 432 Q 100 442 155 438 Q 210 460 285 465 Q 350 505 420 575" fill="none" stroke="url(#rockHighlight)" stroke-width="3.5" />
+        <path d="M 0 485 Q 70 472 135 490 Q 200 505 280 518" fill="none" stroke="#141a24" stroke-width="6" />
+        <path d="M 80 510 Q 165 522 245 565" fill="none" stroke="#141a24" stroke-width="4.5" />
+        <path d="M 135 450 Q 200 472 265 485 Q 330 540 400 610" fill="none" stroke="url(#rockHighlight)" stroke-width="2.5" />
+
+        <!-- Wave Surf & White Water Breaking on Rocks -->
+        <path d="M 0 445 C 70 430 145 448 200 460 C 265 475 330 502 410 560 C 445 585 480 625 500 650" 
+              fill="none" stroke="url(#foamGrad)" stroke-width="8" stroke-linecap="round" opacity="0.9" />
+        <path d="M 20 460 C 95 450 175 468 245 482 C 315 505 380 550 450 610" 
+              fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.85" />
+
+        <!-- Keeper's Cottage beside the Lighthouse -->
+        <rect x="135" y="415" width="46" height="30" rx="2" fill="#e2e8f0" />
+        <polygon points="128,415 158,390 188,415" fill="#9b2c2c" />
+        <rect x="151" y="425" width="14" height="20" fill="#2d3748" rx="1" />
+        <rect x="140" y="420" width="7" height="9" fill="#f4b41a" opacity="0.85" />
+        <!-- Cottage Chimney -->
+        <rect x="172" y="392" width="6" height="12" fill="#742a2a" />
+
+        <!-- Lighthouse Foundation -->
+        <polygon points="186,442 248,442 244,408 190,408" fill="#334155" />
+        <rect x="188" y="404" width="58" height="5" rx="1" fill="#1e293b" />
+
+        <!-- Lighthouse Tower (Tapered) -->
+        <!-- Lower White Tier -->
+        <polygon points="191,404 241,404 235,325 197,325" fill="url(#towerWhiteGrad)" />
+        <!-- Bold Red Band -->
+        <polygon points="197,325 235,325 230,265 202,265" fill="url(#towerRedGrad)" />
+        <!-- Upper White Tier -->
+        <polygon points="202,265 230,265 227,240 205,240" fill="url(#towerWhiteGrad)" />
+
+        <!-- Tower Windows -->
+        <rect x="212" y="360" width="8" height="13" rx="2" fill="#1e293b" />
+        <rect x="212" y="290" width="8" height="13" rx="2" fill="#1e293b" />
+
+        <!-- Balcony / Deck Gallery -->
+        <rect x="199" y="236" width="34" height="5" rx="1.5" fill="#1e293b" />
+        <!-- Gallery Railings -->
+        <line x1="200" y1="231" x2="232" y2="231" stroke="#334155" stroke-width="2" />
+        <line x1="203" y1="231" x2="203" y2="236" stroke="#334155" stroke-width="1.5" />
+        <line x1="210" y1="231" x2="210" y2="236" stroke="#334155" stroke-width="1.5" />
+        <line x1="222" y1="231" x2="222" y2="236" stroke="#334155" stroke-width="1.5" />
+        <line x1="229" y1="231" x2="229" y2="236" stroke="#334155" stroke-width="1.5" />
+
+        <!-- Glass Lantern Room -->
+        <rect x="205" y="214" width="22" height="22" fill="#fffbe8" />
+        <rect x="205" y="214" width="22" height="22" fill="none" stroke="#1e293b" stroke-width="2.5" />
+        <line x1="216" y1="214" x2="216" y2="236" stroke="#1e293b" stroke-width="2" />
+
+        <!-- Lantern Dome / Roof & Spire -->
+        <path d="M 203 214 Q 216 195 229 214 Z" fill="#9b2c2c" />
+        <circle cx="216" cy="195" r="3" fill="#1e293b" />
+        <line x1="216" y1="195" x2="216" y2="188" stroke="#1e293b" stroke-width="2" />
+
+        <!-- Golden Beacon Bulb & Core Glow -->
+        <circle cx="216" cy="225" r="38" fill="url(#lampGlow)" class="beacon-core-pulse" />
+        <circle cx="216" cy="225" r="7" fill="#ffffff" />
+      </svg>
+    </div>
+  </div>
+
+  <main class="app">
+    <header class="app__header">
+      <div class="brand">
+        <img class="brand__mark" src="icon.svg" alt="Nimbus icon" width="56" height="56" />
+        <div class="brand__text">
+          <h1 class="app__title">Nimbus</h1>
+          <p class="app__subtitle">Your day, clearly organized.</p>
+        </div>
+      </div>
+      <div class="app__datetime" id="app-datetime">
+        <div class="app__actions">
+          <button type="button" class="icon-btn" id="settings-btn" title="Settings" aria-label="Settings">&#9881;&#65039;</button>
+        </div>
+        <div class="app__date" id="app-date"></div>
+        <div class="app__time" id="app-time"></div>
+      </div>
+    </header>
+
+    <!-- Empty canvas placeholder for agenda / tasks -->
+    <div class="app__canvas" id="app-canvas">
+      <div class="empty-state">
+        <div class="empty-state__icon">✨</div>
+        <h2 class="empty-state__title">Fresh canvas ready</h2>
+        <p class="empty-state__desc">Ready to plan and build step by step.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Settings Modal -->
+  <div class="modal" id="settings-modal" hidden>
+    <div class="modal__backdrop" data-close-settings></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="modal__header">
+        <h2 class="modal__title" id="settings-title">Settings</h2>
+        <button type="button" class="modal__close" data-close-settings aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="settings-content">
+        <div class="settings-group">
+          <div class="settings-row">
+            <div>
+              <div class="settings-row__label">Appearance</div>
+              <div class="settings-row__desc">Switch between light sky and night sky</div>
+            </div>
+            <button type="button" class="btn btn--secondary" id="theme-toggle-btn">&#127769; Dark mode</button>
+          </div>
+        </div>
+        <div class="settings-divider"></div>
+        <div class="settings-group">
+          <p class="settings-privacy">Data stays 100% in your browser (local-first localStorage).</p>
+          <div class="settings-actions">
+            <button type="button" class="btn btn--secondary" id="export-data-btn">Export data (JSON)</button>
+            <button type="button" class="btn btn--secondary" id="import-data-btn">Import data (JSON)</button>
+            <input type="file" id="import-file-input" accept="application/json" hidden />
+            <button type="button" class="btn btn--danger" id="clear-data-btn">Clear all data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
