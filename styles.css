@@ -195,6 +195,24 @@ body {
   );
 }
 
+/* Soft Horizon Atmospheric Haze */
+.horizon-haze {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(48vh - 45px);
+  height: 90px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(215, 228, 240, 0.45) 40%,
+    rgba(175, 195, 215, 0.45) 60%,
+    transparent 100%
+  );
+  filter: blur(12px);
+  pointer-events: none;
+  z-index: 1;
+}
+
 /* Coast & Lighthouse SVG Container */
 .coast-scene {
   position: absolute;
@@ -633,6 +651,15 @@ html.dark .ocean-surface {
     #0e1724 55%, 
     #09101a 80%, 
     #050a12 100%
+  );
+}
+
+html.dark .horizon-haze {
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(32, 52, 84, 0.5) 40%,
+    rgba(24, 40, 65, 0.5) 60%,
+    transparent 100%
   );
 }
 
