@@ -191,23 +191,23 @@
     cloudEl.style.width = width + "px";
     cloudEl.style.height = height + "px";
 
-    // Build an uneven bank of overlapping lobes for a fuller cumulus silhouette.
-    const lobeCount = randInt(7, 10);
+    // Build 4 to 6 randomized overlapping volumetric lobes
+    const lobeCount = randInt(4, 6);
     for (let i = 0; i < lobeCount; i++) {
       const lobe = document.createElement("span");
       const altType = i % 3 === 1 ? " nimbus-lobe--alt1" : i % 3 === 2 ? " nimbus-lobe--alt2" : "";
       lobe.className = "nimbus-lobe" + altType;
 
-      const lobeW = rand(width * 0.26, width * 0.46);
-      const lobeH = rand(height * 0.38, height * 0.7);
-      const lobeLeft = rand(width * -0.04, width * 0.74);
-      const lobeTop = rand(height * 0.04, height * 0.42);
+      const lobeW = rand(width * 0.45, width * 0.72);
+      const lobeH = rand(height * 0.48, height * 0.78);
+      const lobeLeft = rand(width * 0.05, width * 0.48);
+      const lobeTop = rand(height * 0.05, height * 0.45);
 
       lobe.style.width = lobeW + "px";
       lobe.style.height = lobeH + "px";
       lobe.style.left = lobeLeft + "px";
       lobe.style.top = lobeTop + "px";
-      lobe.style.opacity = rand(0.72, 0.96);
+      lobe.style.opacity = rand(0.78, 0.94);
 
       cloudEl.appendChild(lobe);
     }
@@ -218,14 +218,14 @@
   function spawnCloud(initialX) {
     if (!cloudsLayer) return null;
 
-    const width = randInt(720, 1040);
-    const height = randInt(360, 540);
-    const scale = rand(0.92, 1.22);
+    const width = randInt(500, 750);
+    const height = randInt(280, 420);
+    const scale = rand(0.82, 1.15);
     // Keep clouds in upper sky region (0% to 22% of viewport height)
     const maxY = Math.max(20, window.innerHeight * 0.22);
     const y = rand(0, maxY);
-    // Large cloud banks move slowly enough to feel distant and weighty.
-    const speed = rand(3.5, 6.8);
+    // Smooth, gentle drift speed limit (between 8px/s and 18px/s)
+    const speed = rand(8.5, 17.5);
 
     const el = createCloudElement(width, height);
     const x = initialX !== undefined ? initialX : -width - rand(60, 240);
@@ -245,8 +245,8 @@
 
     const screenW = window.innerWidth || 1200;
     // Initial staggered population across viewport
-    const count = Math.max(2, Math.min(4, Math.ceil(screenW / 700)));
-    const step = (screenW + 520) / count;
+    const count = Math.max(3, Math.min(5, Math.floor(screenW / 380)));
+    const step = (screenW + 300) / count;
 
     for (let i = 0; i < count; i++) {
       const startX = -200 + i * step + rand(-60, 60);
