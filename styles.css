@@ -55,134 +55,33 @@ body {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .nimbus-cloud {
   position: absolute;
+  top: 0;
+  left: 0;
   pointer-events: none;
+  will-change: transform;
 }
 
 .nimbus-lobe {
   position: absolute;
   border-radius: 50%;
-  filter: blur(16px);
+  filter: blur(18px);
   opacity: 0.88;
+  background: radial-gradient(circle at 45% 35%, #ffffff 0%, #e1ebf4 48%, #b2c5d6 85%, transparent 100%);
+  box-shadow: 35px 25px 60px rgba(120, 140, 165, 0.3);
 }
 
-/* Left billowy cloud bank */
-.nimbus-cloud--left {
-  top: 1%;
-  left: -6%;
-  width: 580px;
-  height: 440px;
-  animation: cloudSwayLeft 45s ease-in-out infinite alternate;
+.nimbus-lobe--alt1 {
+  background: radial-gradient(circle at 40% 30%, #f8fbfe 0%, #d5e2f0 52%, #a4bbd0 90%, transparent 100%);
+  box-shadow: 30px 35px 70px rgba(110, 130, 155, 0.28);
 }
 
-.nimbus-cloud--left .nimbus-lobe--1 {
-  width: 320px;
-  height: 240px;
-  top: 15%;
-  left: 20%;
-  background: radial-gradient(circle at 45% 35%, #ffffff 0%, #e1ebf4 50%, #b5c7d8 85%, transparent 100%);
-  box-shadow: 40px 30px 60px rgba(120, 140, 165, 0.35);
-}
-
-.nimbus-cloud--left .nimbus-lobe--2 {
-  width: 280px;
-  height: 220px;
-  top: 35%;
-  left: 45%;
-  background: radial-gradient(circle at 40% 30%, #f8fbfe 0%, #d5e2f0 55%, #a6bcd0 90%, transparent 100%);
-  box-shadow: 30px 40px 70px rgba(110, 130, 155, 0.3);
-}
-
-.nimbus-cloud--left .nimbus-lobe--3 {
-  width: 250px;
-  height: 190px;
-  top: 5%;
-  left: 35%;
-  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #e6f0f8 45%, #bed0e0 80%, transparent 100%);
-}
-
-.nimbus-cloud--left .nimbus-lobe--4 {
-  width: 380px;
-  height: 260px;
-  top: 30%;
-  left: 0%;
-  background: radial-gradient(circle at 45% 40%, #edf4fa 0%, #cbd9e8 50%, #9cb2c8 85%, transparent 100%);
-}
-
-/* Right massive storm cloud formation */
-.nimbus-cloud--right {
-  top: 3%;
-  right: -8%;
-  width: 680px;
-  height: 520px;
-  animation: cloudSwayRight 55s ease-in-out infinite alternate;
-}
-
-.nimbus-cloud--right .nimbus-lobe--1 {
-  width: 360px;
-  height: 280px;
-  top: 10%;
-  right: 25%;
-  background: radial-gradient(circle at 55% 35%, #ffffff 0%, #e2ecf6 45%, #b2c5d6 85%, transparent 100%);
-  box-shadow: -50px 40px 80px rgba(120, 140, 165, 0.35);
-}
-
-.nimbus-cloud--right .nimbus-lobe--2 {
-  width: 300px;
-  height: 240px;
-  top: 30%;
-  right: 48%;
-  background: radial-gradient(circle at 45% 30%, #f7fafe 0%, #d4e2f0 50%, #a4bbd0 90%, transparent 100%);
-}
-
-.nimbus-cloud--right .nimbus-lobe--3 {
-  width: 320px;
-  height: 260px;
-  top: 40%;
-  right: 10%;
-  background: radial-gradient(circle at 50% 40%, #eef5fb 0%, #cbd9e8 50%, #98b0c6 85%, transparent 100%);
-  box-shadow: -40px 50px 90px rgba(105, 125, 150, 0.3);
-}
-
-.nimbus-cloud--right .nimbus-lobe--4 {
-  width: 240px;
-  height: 190px;
-  top: 0%;
-  right: 40%;
-  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #e8f1f8 40%, #bdd0e2 80%, transparent 100%);
-}
-
-.nimbus-cloud--right .nimbus-lobe--5 {
-  width: 260px;
-  height: 180px;
-  top: 55%;
-  right: 30%;
-  background: radial-gradient(circle at 50% 45%, #dfeaf4 0%, #baccdb 55%, #8fa8be 90%, transparent 100%);
-}
-
-/* Top high nimbus veil */
-.nimbus-cloud--top {
-  top: -12%;
-  left: 20%;
-  width: 800px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.75) 0%, rgba(220, 232, 245, 0.5) 45%, transparent 75%);
-  filter: blur(28px);
-  opacity: 0.7;
-}
-
-@keyframes cloudSwayLeft {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(25px, 15px) scale(1.03); }
-}
-
-@keyframes cloudSwayRight {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-30px, 18px) scale(1.04); }
+.nimbus-lobe--alt2 {
+  background: radial-gradient(circle at 50% 38%, #edf4fa 0%, #cbd9e8 50%, #9cb2c8 85%, transparent 100%);
 }
 
 /* Ocean Layer */
@@ -199,88 +98,30 @@ body {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, 
-    #8ba4bc 0%, 
-    #69849e 15%, 
-    #4e6b86 35%, 
-    #37516c 65%, 
-    #243a50 100%
+    #7a94ac 0%, 
+    #637d96 20%, 
+    #4a6782 50%, 
+    #334c66 80%, 
+    #22374b 100%
   );
 }
 
-.ocean-ripple-texture {
-  position: absolute;
-  inset: 0;
-  opacity: 0.45;
-  background-image: 
-    repeating-linear-gradient(180deg, transparent 0, transparent 4px, rgba(255, 255, 255, 0.15) 5px, transparent 8px),
-    radial-gradient(ellipse 400px 30px at 50% 20%, rgba(255, 255, 255, 0.4), transparent 80%);
-  mix-blend-mode: overlay;
-}
-
-/* Multi-layered wave patterns with shimmer and swell */
-.ocean-waves {
-  position: absolute;
-  inset: 0;
-  background-repeat: repeat-x;
-  pointer-events: none;
-}
-
-.ocean-waves--back {
-  opacity: 0.35;
-  background-image: radial-gradient(ellipse 70px 12px at 50% 50%, rgba(255, 255, 255, 0.45), transparent 70%);
-  background-size: 80px 16px;
-  animation: waveDriftBack 20s linear infinite;
-}
-
-.ocean-waves--mid {
-  opacity: 0.45;
-  background-image: 
-    radial-gradient(ellipse 120px 18px at 50% 50%, rgba(255, 255, 255, 0.4), transparent 75%),
-    linear-gradient(180deg, transparent 40%, rgba(20, 35, 52, 0.25) 100%);
-  background-size: 140px 24px;
-  animation: waveDriftMid 14s linear infinite;
-}
-
-.ocean-waves--front {
-  opacity: 0.55;
-  background-image: 
-    radial-gradient(ellipse 220px 26px at 50% 50%, rgba(255, 255, 255, 0.5), transparent 80%),
-    radial-gradient(ellipse 180px 20px at 30% 60%, rgba(255, 255, 255, 0.35), transparent 75%);
-  background-size: 260px 42px;
-  animation: waveDriftFront 10s linear infinite;
-}
-
-@keyframes waveDriftBack {
-  0% { background-position-x: 0; }
-  100% { background-position-x: 80px; }
-}
-
-@keyframes waveDriftMid {
-  0% { background-position-x: 0; }
-  100% { background-position-x: -140px; }
-}
-
-@keyframes waveDriftFront {
-  0% { background-position-x: 0; }
-  100% { background-position-x: 260px; }
-}
-
-/* Luminous Horizon Mist & Atmospheric Fog */
-.horizon-mist {
+/* Soft Horizon Atmospheric Haze */
+.horizon-haze {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 40vh;
-  height: 22vh;
-  background: linear-gradient(180deg, 
-    transparent 0%, 
-    rgba(240, 246, 252, 0.85) 45%, 
-    rgba(225, 236, 248, 0.75) 60%, 
-    rgba(210, 226, 242, 0.3) 85%, 
+  bottom: calc(48vh - 45px);
+  height: 90px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(215, 228, 240, 0.45) 40%,
+    rgba(175, 195, 215, 0.45) 60%,
     transparent 100%
   );
-  filter: blur(16px);
+  filter: blur(12px);
   pointer-events: none;
+  z-index: 1;
 }
 
 /* Coast & Lighthouse SVG Container */
@@ -288,8 +129,8 @@ body {
   position: absolute;
   left: 0;
   bottom: 0;
-  width: min(460px, 42vw);
-  height: min(590px, 62vh);
+  width: 100%;
+  height: 100%;
   z-index: 3;
   pointer-events: none;
 }
@@ -303,96 +144,131 @@ body {
   filter: drop-shadow(0 15px 25px rgba(15, 28, 45, 0.45));
 }
 
-/* Volumetric Beacon Light Layer */
-.beacon-beam-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-/* Volumetric Light Beam Cone spanning across ocean */
-.beacon-light-cone {
-  position: absolute;
-  left: min(190px, 18vw);
-  bottom: min(340px, 36vh);
-  width: 120vw;
-  height: min(220px, 24vh);
-  background: linear-gradient(90deg, 
-    rgba(255, 250, 220, 0.95) 0%, 
-    rgba(244, 180, 26, 0.75) 12%, 
-    rgba(244, 180, 26, 0.3) 40%, 
-    rgba(244, 180, 26, 0.08) 75%, 
-    transparent 100%
-  );
-  clip-path: polygon(0% 48%, 100% 0%, 100% 100%, 0% 52%);
-  transform-origin: 0% 50%;
-  mix-blend-mode: screen;
-  filter: blur(10px);
-  animation: beaconSweep 7s ease-in-out infinite alternate;
-}
-
-/* Ambient Beacon Glow Halo */
-.beacon-glow-halo {
-  position: absolute;
-  left: calc(min(190px, 18vw) - 140px);
-  bottom: calc(min(340px, 36vh) - 140px);
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  background: radial-gradient(circle, 
-    rgba(255, 255, 255, 0.9) 0%, 
-    rgba(244, 180, 26, 0.6) 30%, 
-    rgba(244, 180, 26, 0.15) 60%, 
-    transparent 80%
-  );
-  filter: blur(8px);
-  mix-blend-mode: screen;
-  animation: haloPulse 3.5s ease-in-out infinite alternate;
-}
-
-@keyframes beaconSweep {
-  0% {
-    opacity: 0.75;
-    transform: rotate(-1deg);
-  }
-  50% {
-    opacity: 0.95;
-    transform: rotate(1.2deg);
-  }
-  100% {
-    opacity: 0.8;
-    transform: rotate(-0.5deg);
-  }
-}
-
-@keyframes haloPulse {
-  0% {
-    transform: scale(0.92);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1.08);
-    opacity: 1;
-  }
+/* Spherical Beacon Glow Animations (Synchronized inside SVG) */
+.beacon-halo-pulse {
+  animation: beaconHaloPulse 4.5s ease-in-out infinite alternate;
 }
 
 .beacon-core-pulse {
-  animation: beaconPulse 3.5s ease-in-out infinite alternate;
+  animation: beaconCorePulse 4s ease-in-out infinite alternate;
 }
 
-@keyframes beaconPulse {
+@keyframes beaconHaloPulse {
   0% {
     transform: scale(0.92);
-    transform-origin: 216px 225px;
-    opacity: 0.85;
+    transform-origin: 246px 166px;
+    opacity: 0.45;
   }
   100% {
-    transform: scale(1.1);
-    transform-origin: 216px 225px;
-    opacity: 1;
+    transform: scale(1.06);
+    transform-origin: 246px 166px;
+    opacity: 0.7;
   }
+}
+
+@keyframes beaconCorePulse {
+  0% {
+    transform: scale(0.95);
+    transform-origin: 246px 166px;
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.05);
+    transform-origin: 246px 166px;
+    opacity: 0.85;
+  }
+}
+
+/* Celestial Bodies (Sun & Moon) */
+.celestial-body {
+  position: absolute;
+  top: min(48px, 6vh);
+  right: min(90px, 9vw);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+
+/* Subtle, gentle Sun (Light Mode) */
+.celestial-sun {
+  opacity: 0.85;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.sun-disc {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fffdf4 0%, #fef3c7 45%, #fde68a 80%, #fcd34d 100%);
+  box-shadow: 
+    0 0 20px rgba(253, 230, 138, 0.45),
+    0 0 45px rgba(252, 211, 77, 0.2);
+}
+
+.sun-glow {
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 240, 138, 0.3) 0%, rgba(253, 230, 138, 0.1) 50%, transparent 75%);
+  filter: blur(10px);
+}
+
+/* Serene, glowing Moon (Dark Mode) */
+.celestial-moon {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.moon-disc {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 50%, #e2e8f0 85%, #cbd5e1 100%);
+  box-shadow: 
+    0 0 20px rgba(241, 245, 249, 0.55),
+    0 0 45px rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+
+.moon-glow {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(226, 232, 240, 0.3) 0%, rgba(148, 163, 184, 0.1) 55%, transparent 75%);
+  filter: blur(8px);
+}
+
+.moon-crater {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(148, 163, 184, 0.35) 0%, rgba(100, 116, 139, 0.2) 100%);
+}
+
+.moon-crater--1 {
+  width: 16px;
+  height: 16px;
+  top: 22%;
+  left: 48%;
+}
+
+.moon-crater--2 {
+  width: 22px;
+  height: 22px;
+  bottom: 24%;
+  left: 28%;
+}
+
+.moon-crater--3 {
+  width: 12px;
+  height: 12px;
+  bottom: 30%;
+  right: 20%;
 }
 
 /* Stars layer (dark mode) */
@@ -707,6 +583,12 @@ body {
   gap: 12px;
 }
 
+.settings-row--stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
 .settings-row__label {
   font-weight: 600;
   font-size: 0.95rem;
@@ -717,6 +599,42 @@ body {
   font-size: 0.82rem;
   color: var(--muted);
   margin-top: 2px;
+}
+
+/* Theme segmented chip picker */
+.theme-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.theme-chip {
+  padding: 8px 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.theme-chip:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.theme-chip--active {
+  background: var(--accent-2) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 8px rgba(61, 132, 214, 0.35);
 }
 
 .settings-divider {
@@ -739,8 +657,135 @@ body {
 }
 
 /* ==========================================================================
-   Dark Mode Overrides
+   Twilight Mode Overrides
    ========================================================================== */
+html.twilight {
+  --text: #f6ecf3;
+  --muted: #b0a1b8;
+  --accent: #f97316;
+  --accent-2: #ea580c;
+  --danger: #fb7185;
+  --line: rgba(230, 160, 200, 0.18);
+  --card: rgba(38, 28, 48, 0.74);
+  --card-strong: rgba(48, 36, 60, 0.88);
+}
+
+html.twilight body {
+  background: #161222;
+}
+
+html.twilight .sky-backdrop {
+  background: linear-gradient(180deg, #181c34 0%, #2f3354 26%, #593e58 52%, #8e4c5b 72%, #cb6d48 88%, #e78d52 100%);
+  background-attachment: fixed;
+}
+
+/* Sun dipping low into the horizon in Twilight */
+html.twilight .celestial-sun {
+  opacity: 0.96;
+  top: calc(52vh - 65px);
+  right: min(130px, 14vw);
+  transform: translateY(0);
+}
+
+html.twilight .sun-disc {
+  width: 78px;
+  height: 78px;
+  background: radial-gradient(circle at 45% 40%, #fff7d6 0%, #fca34d 38%, #ea580c 75%, #c2410c 100%);
+  box-shadow: 
+    0 0 35px rgba(234, 88, 12, 0.6),
+    0 0 70px rgba(249, 115, 22, 0.35);
+}
+
+html.twilight .sun-glow {
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.4) 0%, rgba(225, 29, 72, 0.18) 45%, transparent 75%);
+  filter: blur(14px);
+}
+
+html.twilight .celestial-moon {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Barely visible early twinkling stars in Twilight */
+html.twilight .stars-layer {
+  opacity: 0.35;
+}
+
+html.twilight .nimbus-lobe {
+  background: radial-gradient(circle at 45% 35%, rgba(135, 115, 145, 0.9) 0%, rgba(80, 65, 92, 0.72) 48%, rgba(42, 32, 52, 0.45) 85%, transparent 100%) !important;
+  box-shadow: 20px 20px 60px rgba(25, 15, 30, 0.5) !important;
+  opacity: 0.85;
+}
+
+html.twilight .ocean-surface {
+  background: linear-gradient(180deg, 
+    #442a3e 0%, 
+    #322135 22%, 
+    #241c2c 50%, 
+    #171420 75%, 
+    #0c0b12 100%
+  );
+}
+
+html.twilight .horizon-haze {
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(234, 88, 12, 0.38) 35%,
+    rgba(142, 76, 91, 0.3) 65%,
+    transparent 100%
+  );
+}
+
+html.twilight .app__title {
+  background: linear-gradient(135deg, #fff1f2 0%, #fed7aa 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html.twilight .app__canvas {
+  border-color: rgba(230, 160, 200, 0.22);
+  box-shadow: 0 8px 32px rgba(18, 10, 25, 0.52);
+}
+
+html.twilight .icon-btn {
+  background: rgba(58, 42, 72, 0.6);
+  color: var(--text);
+  border-color: var(--line);
+}
+
+html.twilight .icon-btn:hover {
+  background: rgba(78, 56, 96, 0.85);
+}
+
+html.twilight .modal__card {
+  background: #20172e;
+  box-shadow: 0 20px 48px rgba(10, 5, 20, 0.65);
+}
+
+html.twilight .btn--secondary {
+  background: rgba(58, 42, 72, 0.6);
+  color: var(--text);
+}
+
+html.twilight .btn--secondary:hover {
+  background: rgba(78, 56, 96, 0.85);
+}
+
+html.twilight .theme-chip {
+  background: rgba(58, 42, 72, 0.6);
+  color: var(--text);
+}
+
+html.twilight .theme-chip:hover {
+  background: rgba(78, 56, 96, 0.85);
+}
+
+/* ==========================================================================
+   Night (Dark) Mode Overrides
+   ========================================================================== */
+html.night,
 html.dark {
   --text: #e8f0fb;
   --muted: #8ea3bf;
@@ -752,101 +797,123 @@ html.dark {
   --card-strong: rgba(25, 35, 58, 0.9);
 }
 
+html.night body,
 html.dark body {
   background: #09101f;
 }
 
+html.night .sky-backdrop,
 html.dark .sky-backdrop {
   background: linear-gradient(180deg, #070d1a 0%, #0d172e 30%, #152342 60%, #1d3056 85%, #253d6a 100%);
   background-attachment: fixed;
 }
 
+html.night .celestial-sun,
+html.dark .celestial-sun {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+html.night .celestial-moon,
+html.dark .celestial-moon {
+  opacity: 0.92;
+  transform: translateY(0);
+}
+
+html.night .stars-layer,
 html.dark .stars-layer {
   opacity: 1;
 }
 
+html.night .nimbus-lobe,
 html.dark .nimbus-lobe {
   background: radial-gradient(circle at 45% 35%, rgba(65, 85, 120, 0.85) 0%, rgba(38, 52, 78, 0.65) 50%, rgba(18, 26, 42, 0.4) 85%, transparent 100%) !important;
   box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.6) !important;
   opacity: 0.8;
 }
 
-html.dark .nimbus-cloud--top {
-  background: radial-gradient(ellipse at center, rgba(50, 70, 105, 0.5) 0%, rgba(25, 38, 62, 0.3) 50%, transparent 75%);
-}
-
+html.night .ocean-surface,
 html.dark .ocean-surface {
   background: linear-gradient(180deg, 
-    #1b2d45 0%, 
-    #142338 20%, 
-    #0f1c2d 45%, 
-    #0a1422 70%, 
-    #060c16 100%
+    #18283e 0%, 
+    #132032 25%, 
+    #0e1724 55%, 
+    #09101a 80%, 
+    #050a12 100%
   );
 }
 
-html.dark .ocean-waves--back {
-  opacity: 0.2;
-}
-
-html.dark .ocean-waves--mid {
-  opacity: 0.25;
-}
-
-html.dark .ocean-waves--front {
-  opacity: 0.35;
-}
-
-html.dark .horizon-mist {
-  background: linear-gradient(180deg, 
-    transparent 0%, 
-    rgba(35, 55, 85, 0.7) 45%, 
-    rgba(25, 42, 68, 0.5) 65%, 
+html.night .horizon-haze,
+html.dark .horizon-haze {
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(32, 52, 84, 0.5) 40%,
+    rgba(24, 40, 65, 0.5) 60%,
     transparent 100%
   );
 }
 
+html.night .app__title,
 html.dark .app__title {
   background: linear-gradient(135deg, #f0f6ff 0%, #b8d4f8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+html.night .app__canvas,
 html.dark .app__canvas {
   border-color: rgba(140, 180, 230, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
+html.night .icon-btn,
 html.dark .icon-btn {
   background: rgba(30, 42, 70, 0.6);
   color: var(--text);
   border-color: var(--line);
 }
 
+html.night .icon-btn:hover,
 html.dark .icon-btn:hover {
   background: rgba(45, 60, 95, 0.8);
 }
 
+html.night .modal__card,
 html.dark .modal__card {
   background: #141b2d;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
 }
 
+html.night .btn--secondary,
 html.dark .btn--secondary {
   background: rgba(30, 42, 70, 0.6);
   color: var(--text);
 }
 
+html.night .btn--secondary:hover,
 html.dark .btn--secondary:hover {
   background: rgba(45, 60, 95, 0.8);
 }
 
+html.night .theme-chip,
+html.dark .theme-chip {
+  background: rgba(30, 42, 70, 0.6);
+  color: var(--text);
+}
+
+html.night .theme-chip:hover,
+html.dark .theme-chip:hover {
+  background: rgba(45, 60, 95, 0.8);
+}
+
+html.night .btn--danger,
 html.dark .btn--danger {
   background: rgba(226, 96, 127, 0.15);
   color: #fca5b7;
   border-color: rgba(226, 96, 127, 0.3);
 }
 
+html.night .btn--danger:hover,
 html.dark .btn--danger:hover {
   background: rgba(226, 96, 127, 0.25);
 }

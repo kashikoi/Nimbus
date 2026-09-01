@@ -32,25 +32,51 @@
     }
   }
 
-  // Theme Handling
-  function getTheme() {
-    return localStorage.getItem("nimbus.theme") || "light";
+  // Atmosphere / Theme Handling (Day, Twilight, Night, Random)
+  const themePicker = document.getElementById("theme-picker");
+
+  function getThemePreference() {
+    return localStorage.getItem("nimbus.theme") || "night";
   }
 
-  function applyTheme(theme) {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-      if (themeToggleBtn) themeToggleBtn.innerHTML = "&#9728;&#65039; Light mode";
-    } else {
-      document.documentElement.classList.remove("dark");
-      if (themeToggleBtn) themeToggleBtn.innerHTML = "&#127769; Dark mode";
+  function resolveEffectiveTheme(pref) {
+    if (pref === "random") {
+      const cached = sessionStorage.getItem("nimbus.activeRandomTheme");
+      if (cached && ["day", "twilight", "night"].includes(cached)) return cached;
+      const modes = ["day", "twilight", "night"];
+      const picked = modes[Math.floor(Math.random() * modes.length)];
+      sessionStorage.setItem("nimbus.activeRandomTheme", picked);
+      return picked;
     }
-    localStorage.setItem("nimbus.theme", theme);
+    if (pref === "dark") return "night";
+    if (pref === "light") return "day";
+    return pref;
   }
 
-  function toggleTheme() {
-    const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
-    applyTheme(next);
+  function applyTheme(pref) {
+    localStorage.setItem("nimbus.theme", pref);
+    const effective = resolveEffectiveTheme(pref);
+
+    document.documentElement.classList.remove("night", "dark", "twilight");
+
+    if (effective === "night") {
+      document.documentElement.classList.add("night", "dark");
+    } else if (effective === "twilight") {
+      document.documentElement.classList.add("twilight");
+    } // "day" has no extra class
+
+    updateThemePickerUI(pref);
+  }
+
+  function updateThemePickerUI(pref) {
+    if (!themePicker) return;
+    const chips = themePicker.querySelectorAll(".theme-chip");
+    chips.forEach((chip) => {
+      const val = chip.getAttribute("data-theme-val");
+      const isSelected = val === pref || (pref === "dark" && val === "night") || (pref === "light" && val === "day");
+      chip.classList.toggle("theme-chip--active", isSelected);
+      chip.setAttribute("aria-checked", isSelected ? "true" : "false");
+    });
   }
 
   // Settings Modal
@@ -68,7 +94,7 @@
       version: 1,
       appName: "Nimbus",
       exportedAt: new Date().toISOString(),
-      theme: getTheme(),
+      theme: getThemePreference(),
       tasks: JSON.parse(localStorage.getItem("nimbus.tasks") || "[]"),
       lists: JSON.parse(localStorage.getItem("nimbus.lists") || "[]"),
     };
@@ -116,7 +142,17 @@
 
   // Event Listeners
   if (settingsBtn) settingsBtn.addEventListener("click", openSettings);
-  if (themeToggleBtn) themeToggleBtn.addEventListener("click", toggleTheme);
+  if (themePicker) {
+    themePicker.addEventListener("click", (e) => {
+      const chip = e.target.closest(".theme-chip");
+      if (!chip) return;
+      const themeVal = chip.getAttribute("data-theme-val");
+      if (themeVal === "random") {
+        sessionStorage.removeItem("nimbus.activeRandomTheme");
+      }
+      applyTheme(themeVal);
+    });
+  }
   if (exportDataBtn) exportDataBtn.addEventListener("click", exportData);
   if (importDataBtn && importFileInput) {
     importDataBtn.addEventListener("click", () => importFileInput.click());
@@ -136,8 +172,120 @@
     }
   });
 
+  // Dynamic Drifting Nimbus Clouds System
+  const cloudsLayer = document.getElementById("clouds-layer");
+  let clouds = [];
+  let lastFrameTime = null;
+
+  function rand(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function randInt(min, max) {
+    return Math.floor(rand(min, max + 1));
+  }
+
+  function createCloudElement(width, height) {
+    const cloudEl = document.createElement("div");
+    cloudEl.className = "nimbus-cloud";
+    cloudEl.style.width = width + "px";
+    cloudEl.style.height = height + "px";
+
+    // Build 4 to 6 randomized overlapping volumetric lobes
+    const lobeCount = randInt(4, 6);
+    for (let i = 0; i < lobeCount; i++) {
+      const lobe = document.createElement("span");
+      const altType = i % 3 === 1 ? " nimbus-lobe--alt1" : i % 3 === 2 ? " nimbus-lobe--alt2" : "";
+      lobe.className = "nimbus-lobe" + altType;
+
+      const lobeW = rand(width * 0.45, width * 0.72);
+      const lobeH = rand(height * 0.48, height * 0.78);
+      const lobeLeft = rand(width * 0.05, width * 0.48);
+      const lobeTop = rand(height * 0.05, height * 0.45);
+
+      lobe.style.width = lobeW + "px";
+      lobe.style.height = lobeH + "px";
+      lobe.style.left = lobeLeft + "px";
+      lobe.style.top = lobeTop + "px";
+      lobe.style.opacity = rand(0.78, 0.94);
+
+      cloudEl.appendChild(lobe);
+    }
+
+    return cloudEl;
+  }
+
+  function spawnCloud(initialX) {
+    if (!cloudsLayer) return null;
+
+    const width = randInt(500, 750);
+    const height = randInt(280, 420);
+    const scale = rand(0.82, 1.15);
+    // Keep clouds in upper sky region (0% to 22% of viewport height)
+    const maxY = Math.max(20, window.innerHeight * 0.22);
+    const y = rand(0, maxY);
+    // Smooth, gentle drift speed limit (between 8px/s and 18px/s)
+    const speed = rand(8.5, 17.5);
+
+    const el = createCloudElement(width, height);
+    const x = initialX !== undefined ? initialX : -width - rand(60, 240);
+
+    el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+    cloudsLayer.appendChild(el);
+
+    const cloud = { el, x, y, width, height, speed, scale };
+    clouds.push(cloud);
+    return cloud;
+  }
+
+  function initClouds() {
+    if (!cloudsLayer) return;
+    cloudsLayer.innerHTML = "";
+    clouds = [];
+
+    const screenW = window.innerWidth || 1200;
+    // Initial staggered population across viewport
+    const count = Math.max(3, Math.min(5, Math.floor(screenW / 380)));
+    const step = (screenW + 300) / count;
+
+    for (let i = 0; i < count; i++) {
+      const startX = -200 + i * step + rand(-60, 60);
+      spawnCloud(startX);
+    }
+
+    lastFrameTime = performance.now();
+    requestAnimationFrame(cloudAnimationLoop);
+  }
+
+  function cloudAnimationLoop(now) {
+    if (!lastFrameTime) lastFrameTime = now;
+    let dt = (now - lastFrameTime) / 1000;
+    lastFrameTime = now;
+
+    // Cap delta time to prevent jumps when tab is in background
+    if (dt > 0.1) dt = 0.1;
+
+    const screenW = window.innerWidth || 1200;
+
+    for (let i = clouds.length - 1; i >= 0; i--) {
+      const c = clouds[i];
+      c.x += c.speed * dt;
+      c.el.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${c.scale})`;
+
+      // If cloud drifted fully past the right edge of the screen, recycle it
+      if (c.x > screenW + 100) {
+        if (c.el.parentNode) c.el.parentNode.removeChild(c.el);
+        clouds.splice(i, 1);
+        spawnCloud(-c.width - rand(80, 300));
+      }
+    }
+
+    requestAnimationFrame(cloudAnimationLoop);
+  }
+
   // Init
   updateClock();
   setInterval(updateClock, 1000);
-  applyTheme(getTheme());
+  applyTheme(getThemePreference());
+  initClouds();
 })();

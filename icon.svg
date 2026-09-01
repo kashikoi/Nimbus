@@ -30,20 +30,19 @@
   <!-- Ocean in Icon -->
   <path d="M 0 320 L 512 320 L 512 512 L 0 512 Z" fill="url(#oceanGrad)"/>
 
-  <!-- Horizon Mist -->
-  <rect x="0" y="300" width="512" height="40" fill="#e0fbfc" fill-opacity="0.35"/>
+  <!-- Rocky Headland with Coastal Grass -->
+  <path d="M 0 420 Q 90 410 160 435 Q 220 460 300 485 L 300 512 L 0 512 Z" fill="#5a6876"/>
+  <path d="M 0 410 Q 70 395 130 405 Q 180 415 220 445 L 0 445 Z" fill="#557c55"/>
+  <path d="M 0 435 Q 90 425 180 450 Q 240 475 300 495" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.8"/>
 
-  <!-- Rocky Headland -->
-  <path d="M 0 450 Q 80 430 140 460 Q 180 480 240 490 L 240 512 L 0 512 Z" fill="#293241"/>
-
-  <!-- Lighthouse Beam -->
-  <polygon points="120,225 480,180 480,280" fill="url(#beamGrad)" opacity="0.8"/>
+  <!-- Lighthouse Spherical Glow -->
   <circle cx="120" cy="225" r="28" fill="url(#beaconGlow)"/>
 
   <!-- Lighthouse -->
-  <!-- Cottage -->
-  <rect x="52" y="380" width="38" height="30" rx="3" fill="#f8f9fa"/>
-  <polygon points="46,380 71,360 96,380" fill="#c1121f"/>
+  <!-- Cottage (Attached to Tower) -->
+  <rect x="56" y="378" width="44" height="32" rx="2" fill="#f8f9fa"/>
+  <polygon points="50,378 76,356 102,378" fill="#c1121f"/>
+  <rect x="68" y="388" width="10" height="22" fill="#293241" rx="1"/>
   <!-- Tower Base -->
   <polygon points="90,410 150,410 142,240 98,240" fill="#f8f9fa"/>
   <!-- Red Stripes on Tower -->
