@@ -30,9 +30,6 @@
   <!-- Ocean in Icon -->
   <path d="M 0 320 L 512 320 L 512 512 L 0 512 Z" fill="url(#oceanGrad)"/>
 
-  <!-- Horizon Mist -->
-  <rect x="0" y="300" width="512" height="40" fill="#e0fbfc" fill-opacity="0.35"/>
-
   <!-- Rocky Headland with Coastal Grass -->
   <path d="M 0 420 Q 90 410 160 435 Q 220 460 300 485 L 300 512 L 0 512 Z" fill="#5a6876"/>
   <path d="M 0 410 Q 70 395 130 405 Q 180 415 220 445 L 0 445 Z" fill="#557c55"/>

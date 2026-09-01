@@ -265,24 +265,6 @@ body {
   100% { background-position-x: 260px; }
 }
 
-/* Luminous Horizon Mist & Atmospheric Fog */
-.horizon-mist {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 40vh;
-  height: 22vh;
-  background: linear-gradient(180deg, 
-    transparent 0%, 
-    rgba(240, 246, 252, 0.85) 45%, 
-    rgba(225, 236, 248, 0.75) 60%, 
-    rgba(210, 226, 242, 0.3) 85%, 
-    transparent 100%
-  );
-  filter: blur(16px);
-  pointer-events: none;
-}
-
 /* Coast & Lighthouse SVG Container */
 .coast-scene {
   position: absolute;
@@ -738,15 +720,6 @@ html.dark .ocean-waves--mid {
 
 html.dark .ocean-waves--front {
   opacity: 0.35;
-}
-
-html.dark .horizon-mist {
-  background: linear-gradient(180deg, 
-    transparent 0%, 
-    rgba(35, 55, 85, 0.7) 45%, 
-    rgba(25, 42, 68, 0.5) 65%, 
-    transparent 100%
-  );
 }
 
 html.dark .app__title {
