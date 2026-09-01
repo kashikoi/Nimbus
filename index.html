@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nimbus</title>
   <meta name="theme-color" content="#7ec0ee" />
-  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01" />
-  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01" />
-  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01" />
-  <link rel="stylesheet" href="styles.css?v=2026.09.01" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01.29" />
+  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01.29" />
+  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01.29" />
+  <link rel="stylesheet" href="styles.css?v=2026.09.01.29" />
   <script>
     // Set theme class before first paint to prevent flash
     try {
@@ -278,15 +278,120 @@
       </div>
     </header>
 
-    <!-- Empty canvas placeholder for agenda / tasks -->
-    <div class="app__canvas" id="app-canvas">
-      <div class="empty-state">
-        <div class="empty-state__icon">✨</div>
-        <h2 class="empty-state__title">Fresh canvas ready</h2>
-        <p class="empty-state__desc">Ready to plan and build step by step.</p>
+    <section class="todo-group" aria-label="To-do actions">
+      <div class="todo-group__actions">
+        <button class="todo-group__add" id="add-todo-btn" type="button">Add Action</button>
+        <button class="todo-group__add" id="add-group-btn" type="button">Add Group</button>
+      </div>
+      <div class="task-list" data-list="unassigned" aria-label="Unassigned to-dos"></div>
+    </section>
+
+    <div class="app__canvas" id="app-canvas" aria-label="Weekly plan">
+      <section class="day-group" data-day="saturday" aria-labelledby="saturday-heading">
+        <div class="day-group__heading">
+          <h2 class="day-group__title" id="saturday-heading">Saturday</h2>
+          <span class="day-group__date" data-date-for="saturday"></span>
+        </div>
+        <div class="task-list" data-list="saturday" aria-label="Saturday to-dos"></div>
+      </section>
+      <section class="day-group" data-day="sunday" aria-labelledby="sunday-heading">
+        <div class="day-group__heading">
+          <h2 class="day-group__title" id="sunday-heading">Sunday</h2>
+          <span class="day-group__date" data-date-for="sunday"></span>
+        </div>
+        <div class="task-list" data-list="sunday" aria-label="Sunday to-dos"></div>
+      </section>
+      <section class="day-group" data-day="monday" aria-labelledby="monday-heading">
+        <div class="day-group__heading">
+          <h2 class="day-group__title" id="monday-heading">Monday</h2>
+          <span class="day-group__date" data-date-for="monday"></span>
+        </div>
+        <div class="task-list" data-list="monday" aria-label="Monday to-dos"></div>
+      </section>
+      <section class="day-group" data-day="tuesday" aria-labelledby="tuesday-heading">
+        <div class="day-group__heading">
+          <h2 class="day-group__title" id="tuesday-heading">Tuesday</h2>
+          <span class="day-group__date" data-date-for="tuesday"></span>
+        </div>
+        <div class="task-list" data-list="tuesday" aria-label="Tuesday to-dos"></div>
+      </section>
+      <section class="day-group" data-day="wednesday" aria-labelledby="wednesday-heading">
+        <div class="day-group__heading">
+          <h2 class="day-group__title" id="wednesday-heading">Wednesday</h2>
+          <span class="day-group__date" data-date-for="wednesday"></span>
+        </div>
+        <div class="task-list" data-list="wednesday" aria-label="Wednesday to-dos"></div>
+      </section>
+      <section class="day-group" data-day="thursday" aria-labelledby="thursday-heading">
+        <div class="day-group__heading">
+          <h2 class="day-group__title" id="thursday-heading">Thursday</h2>
+          <span class="day-group__date" data-date-for="thursday"></span>
+        </div>
+        <div class="task-list" data-list="thursday" aria-label="Thursday to-dos"></div>
+      </section>
+      <section class="day-group" data-day="friday" aria-labelledby="friday-heading">
+        <div class="day-group__heading">
+          <h2 class="day-group__title" id="friday-heading">Friday</h2>
+          <span class="day-group__date" data-date-for="friday"></span>
+        </div>
+        <div class="task-list" data-list="friday" aria-label="Friday to-dos"></div>
+      </section>
+    </div>
+
+    <div class="custom-groups" id="custom-groups"></div>
+  </main>
+
+  <div class="modal" id="todo-modal" hidden>
+    <div class="modal__backdrop" data-close-todo></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="todo-modal-title">
+      <div class="modal__header">
+        <h2 class="modal__title" id="todo-modal-title">New to-do</h2>
+        <button type="button" class="modal__close" data-close-todo aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="todo-form">
+        <label class="todo-form__label" for="todo-input">To-do</label>
+        <input class="todo-form__input" id="todo-input" name="todo" type="text" maxlength="160" autocomplete="off" required />
+        <div class="todo-form__actions">
+          <button class="btn btn--secondary" type="button" data-close-todo>Cancel</button>
+          <button class="btn btn--primary" type="submit">Add to-do</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="group-modal" hidden>
+    <div class="modal__backdrop" data-close-group></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="group-modal-title">
+      <div class="modal__header">
+        <h2 class="modal__title" id="group-modal-title">New group</h2>
+        <button type="button" class="modal__close" data-close-group aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="group-form">
+        <label class="todo-form__label" for="group-input">Group name</label>
+        <input class="todo-form__input" id="group-input" name="group" type="text" maxlength="48" autocomplete="off" required />
+        <div class="todo-form__actions">
+          <button class="btn btn--secondary" type="button" data-close-group>Cancel</button>
+          <button class="btn btn--primary" type="submit">Create group</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="group-delete-modal" hidden>
+    <div class="modal__backdrop" data-close-group-delete></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="group-delete-title">
+      <div class="modal__header">
+        <h2 class="modal__title" id="group-delete-title">Delete group</h2>
+        <button type="button" class="modal__close" data-close-group-delete aria-label="Close dialog">&times;</button>
+      </div>
+      <p class="group-delete__message" id="group-delete-message"></p>
+      <div class="todo-form__actions">
+        <button class="btn btn--secondary" type="button" data-close-group-delete>Cancel</button>
+        <button class="btn btn--secondary" id="move-group-tasks-btn" type="button">Move to To-Dos</button>
+        <button class="btn btn--danger" id="delete-group-tasks-btn" type="button">Delete tasks</button>
       </div>
     </div>
-  </main>
+  </div>
 
   <!-- Settings Modal -->
   <div class="modal" id="settings-modal" hidden>
@@ -318,6 +423,7 @@
             <button type="button" class="btn btn--secondary" id="export-data-btn">Export data (JSON)</button>
             <button type="button" class="btn btn--secondary" id="import-data-btn">Import data (JSON)</button>
             <input type="file" id="import-file-input" accept="application/json" hidden />
+            <button type="button" class="btn btn--secondary" id="randomize-data-btn">Randomize data (demo)</button>
             <button type="button" class="btn btn--danger" id="clear-data-btn">Clear all data</button>
           </div>
         </div>
@@ -325,6 +431,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=2026.09.01"></script>
+  <script src="app.js?v=2026.09.01.29"></script>
 </body>
 </html>
