@@ -163,18 +163,6 @@ body {
   background: radial-gradient(circle at 50% 45%, #dfeaf4 0%, #baccdb 55%, #8fa8be 90%, transparent 100%);
 }
 
-/* Top high nimbus veil */
-.nimbus-cloud--top {
-  top: -12%;
-  left: 20%;
-  width: 800px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.75) 0%, rgba(220, 232, 245, 0.5) 45%, transparent 75%);
-  filter: blur(28px);
-  opacity: 0.7;
-}
-
 @keyframes cloudSwayLeft {
   0% { transform: translate(0, 0) scale(1); }
   100% { transform: translate(25px, 15px) scale(1.03); }
@@ -199,22 +187,12 @@ body {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, 
-    #8ba4bc 0%, 
-    #69849e 15%, 
-    #4e6b86 35%, 
-    #37516c 65%, 
-    #243a50 100%
+    #7a94ac 0%, 
+    #637d96 20%, 
+    #4a6782 50%, 
+    #334c66 80%, 
+    #22374b 100%
   );
-}
-
-.ocean-ripple-texture {
-  position: absolute;
-  inset: 0;
-  opacity: 0.45;
-  background-image: 
-    repeating-linear-gradient(180deg, transparent 0, transparent 4px, rgba(255, 255, 255, 0.15) 5px, transparent 8px),
-    radial-gradient(ellipse 400px 30px at 50% 20%, rgba(255, 255, 255, 0.4), transparent 80%);
-  mix-blend-mode: overlay;
 }
 
 /* Multi-layered wave patterns with shimmer and swell */
@@ -226,26 +204,26 @@ body {
 }
 
 .ocean-waves--back {
-  opacity: 0.35;
-  background-image: radial-gradient(ellipse 70px 12px at 50% 50%, rgba(255, 255, 255, 0.45), transparent 70%);
+  opacity: 0.25;
+  background-image: radial-gradient(ellipse 70px 10px at 50% 50%, rgba(255, 255, 255, 0.35), transparent 75%);
   background-size: 80px 16px;
   animation: waveDriftBack 20s linear infinite;
 }
 
 .ocean-waves--mid {
-  opacity: 0.45;
+  opacity: 0.35;
   background-image: 
-    radial-gradient(ellipse 120px 18px at 50% 50%, rgba(255, 255, 255, 0.4), transparent 75%),
-    linear-gradient(180deg, transparent 40%, rgba(20, 35, 52, 0.25) 100%);
+    radial-gradient(ellipse 120px 14px at 50% 50%, rgba(255, 255, 255, 0.3), transparent 75%),
+    linear-gradient(180deg, transparent 50%, rgba(20, 35, 52, 0.2) 100%);
   background-size: 140px 24px;
   animation: waveDriftMid 14s linear infinite;
 }
 
 .ocean-waves--front {
-  opacity: 0.55;
+  opacity: 0.45;
   background-image: 
-    radial-gradient(ellipse 220px 26px at 50% 50%, rgba(255, 255, 255, 0.5), transparent 80%),
-    radial-gradient(ellipse 180px 20px at 30% 60%, rgba(255, 255, 255, 0.35), transparent 75%);
+    radial-gradient(ellipse 220px 20px at 50% 50%, rgba(255, 255, 255, 0.4), transparent 80%),
+    radial-gradient(ellipse 180px 16px at 30% 60%, rgba(255, 255, 255, 0.25), transparent 75%);
   background-size: 260px 42px;
   animation: waveDriftFront 10s linear infinite;
 }
@@ -696,30 +674,26 @@ html.dark .nimbus-lobe {
   opacity: 0.8;
 }
 
-html.dark .nimbus-cloud--top {
-  background: radial-gradient(ellipse at center, rgba(50, 70, 105, 0.5) 0%, rgba(25, 38, 62, 0.3) 50%, transparent 75%);
-}
-
 html.dark .ocean-surface {
   background: linear-gradient(180deg, 
-    #1b2d45 0%, 
-    #142338 20%, 
-    #0f1c2d 45%, 
-    #0a1422 70%, 
-    #060c16 100%
+    #18283e 0%, 
+    #132032 25%, 
+    #0e1724 55%, 
+    #09101a 80%, 
+    #050a12 100%
   );
 }
 
 html.dark .ocean-waves--back {
-  opacity: 0.2;
+  opacity: 0.15;
 }
 
 html.dark .ocean-waves--mid {
-  opacity: 0.25;
+  opacity: 0.2;
 }
 
 html.dark .ocean-waves--front {
-  opacity: 0.35;
+  opacity: 0.25;
 }
 
 html.dark .app__title {
