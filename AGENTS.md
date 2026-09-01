@@ -8,7 +8,7 @@
   - `nimbus.tasks` (Array of task items)
   - `nimbus.lists` / `nimbus.categories`
 - Scenic Background Elements:
-  - Sky gradient and twinkling night stars layer (`.stars-layer`, `.stars--sm`, `.stars--lg`)
+  - Sky gradient, soft celestial bodies (muted warm sun in light mode, serene silver/cratered moon in dark mode: `.celestial-body`, `.celestial-sun`, `.celestial-moon`), and twinkling night stars layer (`.stars-layer`, `.stars--sm`, `.stars--lg`)
   - Dynamic procedural volumetric nimbus clouds drifting continuously left-to-right (`.clouds-layer`, `.nimbus-cloud`, `.nimbus-lobe`, with randomized shapes, lobe counts, altitudes, and capped slow drift speeds)
   - Smooth deep ocean water layer (`.ocean-layer`, `.ocean-surface`)
   - Soft horizon atmospheric haze (`.horizon-haze`)

@@ -19,8 +19,24 @@
 <body>
   <!-- Ambient Scenic Background: Ocean, Nimbus Storm Clouds, Fog & Lighthouse with Glowing Beacon -->
   <div class="scenic-bg" aria-hidden="true">
-    <!-- Sky Layer -->
+    <!-- Sky Layer & Celestial Bodies -->
     <div class="sky-backdrop">
+      <!-- Sun (Light Mode) -->
+      <div class="celestial-body celestial-sun" aria-hidden="true">
+        <div class="sun-glow"></div>
+        <div class="sun-disc"></div>
+      </div>
+
+      <!-- Moon (Dark Mode) -->
+      <div class="celestial-body celestial-moon" aria-hidden="true">
+        <div class="moon-glow"></div>
+        <div class="moon-disc">
+          <div class="moon-crater moon-crater--1"></div>
+          <div class="moon-crater moon-crater--2"></div>
+          <div class="moon-crater moon-crater--3"></div>
+        </div>
+      </div>
+
       <div class="stars-layer">
         <div class="stars stars--sm"></div>
         <div class="stars stars--lg"></div>

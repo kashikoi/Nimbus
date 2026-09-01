@@ -179,6 +179,98 @@ body {
   }
 }
 
+/* Celestial Bodies (Sun & Moon) */
+.celestial-body {
+  position: absolute;
+  top: min(48px, 6vh);
+  right: min(90px, 9vw);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+
+/* Subtle, gentle Sun (Light Mode) */
+.celestial-sun {
+  opacity: 0.85;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.sun-disc {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fffdf4 0%, #fef3c7 45%, #fde68a 80%, #fcd34d 100%);
+  box-shadow: 
+    0 0 20px rgba(253, 230, 138, 0.45),
+    0 0 45px rgba(252, 211, 77, 0.2);
+}
+
+.sun-glow {
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 240, 138, 0.3) 0%, rgba(253, 230, 138, 0.1) 50%, transparent 75%);
+  filter: blur(10px);
+}
+
+/* Serene, glowing Moon (Dark Mode) */
+.celestial-moon {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.moon-disc {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 50%, #e2e8f0 85%, #cbd5e1 100%);
+  box-shadow: 
+    0 0 20px rgba(241, 245, 249, 0.55),
+    0 0 45px rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+
+.moon-glow {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(226, 232, 240, 0.3) 0%, rgba(148, 163, 184, 0.1) 55%, transparent 75%);
+  filter: blur(8px);
+}
+
+.moon-crater {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(148, 163, 184, 0.35) 0%, rgba(100, 116, 139, 0.2) 100%);
+}
+
+.moon-crater--1 {
+  width: 16px;
+  height: 16px;
+  top: 22%;
+  left: 48%;
+}
+
+.moon-crater--2 {
+  width: 22px;
+  height: 22px;
+  bottom: 24%;
+  left: 28%;
+}
+
+.moon-crater--3 {
+  width: 12px;
+  height: 12px;
+  bottom: 30%;
+  right: 20%;
+}
+
 /* Stars layer (dark mode) */
 .stars-layer {
   position: absolute;
@@ -543,6 +635,16 @@ html.dark body {
 html.dark .sky-backdrop {
   background: linear-gradient(180deg, #070d1a 0%, #0d172e 30%, #152342 60%, #1d3056 85%, #253d6a 100%);
   background-attachment: fixed;
+}
+
+html.dark .celestial-sun {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+html.dark .celestial-moon {
+  opacity: 0.92;
+  transform: translateY(0);
 }
 
 html.dark .stars-layer {
