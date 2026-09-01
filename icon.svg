@@ -33,8 +33,10 @@
   <!-- Horizon Mist -->
   <rect x="0" y="300" width="512" height="40" fill="#e0fbfc" fill-opacity="0.35"/>
 
-  <!-- Rocky Headland -->
-  <path d="M 0 450 Q 80 430 140 460 Q 180 480 240 490 L 240 512 L 0 512 Z" fill="#293241"/>
+  <!-- Rocky Headland with Coastal Grass -->
+  <path d="M 0 420 Q 90 410 160 435 Q 220 460 300 485 L 300 512 L 0 512 Z" fill="#5a6876"/>
+  <path d="M 0 410 Q 70 395 130 405 Q 180 415 220 445 L 0 445 Z" fill="#557c55"/>
+  <path d="M 0 435 Q 90 425 180 450 Q 240 475 300 495" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.8"/>
 
   <!-- Lighthouse Spherical Glow -->
   <circle cx="120" cy="225" r="32" fill="url(#beaconGlow)"/>
