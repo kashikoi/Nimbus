@@ -62,23 +62,24 @@
     <!-- Horizon Mist & Atmospheric Fog -->
     <div class="horizon-mist"></div>
 
-    <!-- Coastline, Grassy Knoll & Lighthouse Scene (Anchored to Bottom-Left) -->
+    <!-- Coastline, Grassy Knoll & Lighthouse Scene (Anchored across Bottom) -->
     <div class="coast-scene">
-      <svg class="lighthouse-svg" viewBox="0 0 800 650" preserveAspectRatio="xMinYMax meet" xmlns="http://www.w3.org/2000/svg">
+      <svg class="lighthouse-svg" viewBox="0 0 1600 700" preserveAspectRatio="xMinYMax meet" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <!-- Light Rock / Granite Gradient (Visible in Light & Dark Mode) -->
-          <linearGradient id="rockGraniteGrad" x1="0%" y1="0%" x2="40%" y2="100%">
+          <linearGradient id="rockGraniteGrad" x1="0%" y1="0%" x2="50%" y2="100%">
             <stop offset="0%" stop-color="#8a99a8" />
-            <stop offset="30%" stop-color="#6c7c8c" />
-            <stop offset="70%" stop-color="#4d5b6a" />
-            <stop offset="100%" stop-color="#344150" />
+            <stop offset="25%" stop-color="#6e7e8e" />
+            <stop offset="60%" stop-color="#4e5c6b" />
+            <stop offset="100%" stop-color="#2c3642" />
           </linearGradient>
 
           <!-- Rock Shelf Top Highlight -->
           <linearGradient id="rockLedgeHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#cbd5e1" stop-opacity="0.95" />
-            <stop offset="50%" stop-color="#94a3b8" stop-opacity="0.8" />
-            <stop offset="100%" stop-color="#64748b" stop-opacity="0.3" />
+            <stop offset="40%" stop-color="#94a3b8" stop-opacity="0.8" />
+            <stop offset="80%" stop-color="#64748b" stop-opacity="0.4" />
+            <stop offset="100%" stop-color="#475569" stop-opacity="0.1" />
           </linearGradient>
 
           <!-- Coastal Grass / Knoll Gradient -->
@@ -135,128 +136,127 @@
           </radialGradient>
         </defs>
 
-        <!-- Distant Low Reef / Rocks Outcropping in the Ocean -->
-        <path d="M 0 495 Q 120 470 260 488 Q 400 505 540 520 Q 670 535 800 560 L 800 650 L 0 650 Z" fill="#3a4856" opacity="0.5" />
-        <path d="M 120 482 Q 280 500 450 518 Q 620 538 780 560" fill="none" stroke="url(#foamGrad)" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+        <!-- Distant Low Reef & Sunken Boulders in Ocean -->
+        <path d="M 0 525 Q 200 500 450 518 Q 750 540 1050 565 Q 1350 585 1600 605 L 1600 700 L 0 700 Z" fill="#364350" opacity="0.45" />
+        <path d="M 150 515 Q 400 530 680 550 Q 1000 575 1300 595 Q 1500 608 1600 615" fill="none" stroke="url(#foamGrad)" stroke-width="3" stroke-linecap="round" opacity="0.55" />
 
-        <!-- Main Promontory Body (Extending from Left Edge 0 to Right Edge 760) -->
-        <path d="M 0 440 
-                 C 80 410, 160 415, 230 425 
-                 C 310 435, 380 415, 460 448 
-                 C 540 480, 620 525, 710 580 
-                 C 740 600, 770 625, 800 650 
-                 L 0 650 Z" 
+        <!-- Main Promontory & Rocky Ridge extending down to the right corner -->
+        <path d="M 0 470 
+                 C 80 440, 160 445, 230 455 
+                 C 310 465, 380 445, 460 478 
+                 C 530 505, 590 535, 660 555 
+                 C 730 572, 790 568, 860 582 
+                 C 940 598, 1010 592, 1090 612 
+                 C 1170 630, 1240 622, 1320 642 
+                 C 1400 660, 1480 655, 1560 678 
+                 C 1585 686, 1600 692, 1600 700 
+                 L 0 700 Z" 
               fill="url(#rockGraniteGrad)" />
 
-        <!-- Rock Formations, Strata, Ledges & Highlighted Crags -->
-        <!-- Upper Rock Ledge Facets -->
-        <polygon points="120,440 220,442 270,470 170,475" fill="#7d8c9d" opacity="0.8" />
-        <polygon points="270,470 380,465 440,510 330,520" fill="#606f7e" opacity="0.75" />
-        <polygon points="440,510 560,518 630,575 510,580" fill="#505f6e" opacity="0.8" />
-        <polygon points="630,575 730,585 790,645 680,648" fill="#3e4c5a" opacity="0.85" />
+        <!-- Jagged Cliffs, Craggy Facets & Rocky Ledges Along Slope -->
+        <polygon points="120,470 220,472 270,500 170,505" fill="#7d8c9d" opacity="0.8" />
+        <polygon points="270,500 380,495 440,540 330,550" fill="#606f7e" opacity="0.75" />
+        <polygon points="440,540 540,548 600,600 490,608" fill="#505f6e" opacity="0.8" />
+        <polygon points="580,575 680,585 750,638 640,645" fill="#445260" opacity="0.8" />
+        <polygon points="730,590 840,602 910,655 800,660" fill="#3c4854" opacity="0.85" />
+        <polygon points="890,615 1010,628 1080,675 970,680" fill="#343f4a" opacity="0.85" />
+        <polygon points="1060,632 1190,648 1260,688 1140,692" fill="#2d3742" opacity="0.85" />
+        <polygon points="1230,650 1380,665 1450,698 1310,700" fill="#262f38" opacity="0.9" />
+        <polygon points="1420,670 1570,688 1600,700 1480,700" fill="#202730" opacity="0.95" />
 
-        <!-- Sharp Rock Highlights on sunny edges -->
-        <path d="M 0 445 Q 80 430 160 440 Q 240 450 310 445 Q 390 470 470 515 Q 560 565 670 615 Q 730 635 800 650" 
+        <!-- Rocky Crag Strata & Crest Highlights -->
+        <path d="M 0 475 Q 80 460 160 470 Q 240 480 310 475 Q 390 500 470 545 Q 560 590 660 605 Q 760 622 870 635 Q 980 652 1100 665 Q 1230 678 1370 688 Q 1490 694 1600 700" 
               fill="none" stroke="url(#rockLedgeHighlight)" stroke-width="4.5" stroke-linecap="round" />
         
-        <path d="M 40 475 Q 140 460 220 480 Q 320 495 420 540 Q 520 595 620 645" 
+        <path d="M 40 505 Q 140 490 220 510 Q 320 525 420 570 Q 510 615 610 635 Q 710 650 820 665 Q 930 678 1050 688 Q 1200 696 1350 700" 
               fill="none" stroke="url(#rockLedgeHighlight)" stroke-width="2.5" stroke-linecap="round" opacity="0.8" />
 
-        <path d="M 0 520 Q 90 505 180 525 Q 280 545 380 580 Q 480 630 550 650" 
-              fill="none" stroke="#25303c" stroke-width="6" stroke-linecap="round" />
-        
-        <path d="M 110 545 Q 220 560 320 605 Q 410 640 460 650" 
-              fill="none" stroke="#1e2732" stroke-width="4.5" stroke-linecap="round" />
+        <!-- Jagged Rock Crevices & Shadows -->
+        <path d="M 0 550 Q 90 535 180 555 Q 280 575 380 610 Q 480 655 580 670 Q 680 682 780 695" 
+              fill="none" stroke="#202a34" stroke-width="6" stroke-linecap="round" />
+        <path d="M 110 575 Q 220 590 320 635 Q 410 670 510 690" 
+              fill="none" stroke="#182028" stroke-width="4.5" stroke-linecap="round" />
+        <path d="M 540 605 Q 630 620 720 655 Q 810 678 920 698" 
+              fill="none" stroke="#1c242e" stroke-width="4" stroke-linecap="round" />
+        <path d="M 780 635 Q 880 650 990 678 Q 1100 695 1200 700" 
+              fill="none" stroke="#182028" stroke-width="3.5" stroke-linecap="round" />
+        <path d="M 1040 655 Q 1150 670 1280 690 Q 1400 698 1500 700" 
+              fill="none" stroke="#141a20" stroke-width="3" stroke-linecap="round" />
 
         <!-- Coastal Grassy Knoll (Covering Left Flank and Crest) -->
-        <!-- Grassy slope under cottage & lighthouse extending all the way to left screen edge -->
-        <path d="M 0 395 
-                 C 50 385, 110 390, 160 395 
-                 C 210 400, 260 398, 320 412 
-                 C 380 425, 430 435, 480 465 
-                 C 450 475, 400 465, 340 448 
-                 C 270 435, 200 428, 130 425 
-                 C 70 422, 20 428, 0 435 Z" 
+        <path d="M 0 425 
+                 C 50 415, 110 420, 160 425 
+                 C 210 430, 260 428, 320 442 
+                 C 380 455, 430 465, 480 495 
+                 C 450 505, 400 495, 340 478 
+                 C 270 465, 200 458, 130 455 
+                 C 70 452, 20 458, 0 465 Z" 
               fill="url(#grassGrad)" />
 
         <!-- Grassy Knoll Turf Highlights & Texture -->
-        <path d="M 0 400 C 60 392, 130 396, 190 402 C 260 406, 330 420, 420 448 C 450 458, 470 468, 480 465" 
+        <path d="M 0 430 C 60 422, 130 426, 190 432 C 260 436, 330 450, 420 478 C 450 488, 470 498, 480 495" 
               fill="none" stroke="url(#grassHighlight)" stroke-width="4.5" stroke-linecap="round" />
 
         <!-- Grass tufts / vegetation along the knoll -->
-        <path d="M 30 396 L 33 390 L 37 396 M 70 393 L 74 386 L 79 394 M 115 395 L 119 388 L 124 396 M 150 398 L 155 390 L 160 398 M 275 408 L 280 400 L 285 408 M 340 422 L 345 414 L 350 423 M 390 434 L 395 425 L 400 435" 
+        <path d="M 30 426 L 33 420 L 37 426 M 70 423 L 74 416 L 79 424 M 115 425 L 119 418 L 124 426 M 150 428 L 155 420 L 160 428 M 275 438 L 280 430 L 285 438 M 340 452 L 345 444 L 350 453 M 390 464 L 395 455 L 400 465" 
               stroke="#a3c9a8" stroke-width="2" stroke-linecap="round" />
 
-        <!-- Crashing Ocean Surf & White Water Foam along Shoreline -->
-        <path d="M 0 465 C 90 448 190 468 270 482 C 360 498 450 535 550 595 C 630 635 720 650 800 650" 
+        <!-- Crashing Ocean Surf & White Water Foam along the Entire Shoreline -->
+        <path d="M 0 495 C 90 478 190 498 270 512 C 360 528 450 565 550 625 C 650 660 760 670 880 682 C 1010 694 1150 696 1300 698 C 1450 700 1550 700 1600 700" 
               fill="none" stroke="url(#foamGrad)" stroke-width="10" stroke-linecap="round" opacity="0.95" />
-        <path d="M 20 482 C 110 470 210 490 300 508 C 390 530 480 575 580 635 C 620 650 670 650 700 650" 
+        <path d="M 20 512 C 110 500 210 520 300 538 C 390 560 480 605 580 655 C 680 675 790 685 910 695 C 1030 700 1150 700 1300 700" 
               fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.88" />
-        <path d="M 160 495 C 240 512 330 535 410 575 C 470 610 520 645 550 650" 
+        <path d="M 160 525 C 240 542 330 565 410 605 C 490 645 580 678 680 695 C 750 700 850 700 950 700" 
               fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.75" />
 
         <!-- Keeper's Cottage beside the Lighthouse -->
-        <!-- Cottage Foundation on Grass -->
-        <rect x="138" y="398" width="56" height="36" rx="3" fill="#f1f5f9" />
-        <!-- Cottage Stone Base -->
-        <rect x="136" y="430" width="60" height="6" rx="1" fill="#475569" />
-        <!-- Cottage Red Pitched Roof -->
-        <polygon points="130,398 166,368 202,398" fill="#a61e1e" />
-        <polygon points="134,398 166,372 198,398" fill="#c92a2a" />
-        <!-- Cottage Door -->
-        <rect x="158" y="408" width="16" height="24" fill="#334155" rx="1.5" />
-        <!-- Warm Glowing Window -->
-        <rect x="144" y="404" width="9" height="12" rx="1" fill="#f4b41a" />
-        <rect x="183" y="404" width="9" height="12" rx="1" fill="#f4b41a" />
-        <line x1="148.5" y1="404" x2="148.5" y2="416" stroke="#7a1414" stroke-width="1" />
-        <line x1="144" y1="410" x2="153" y2="410" stroke="#7a1414" stroke-width="1" />
-        <!-- Cottage Chimney with Smoke Accent -->
-        <rect x="184" y="370" width="8" height="16" fill="#7a1414" rx="1" />
+        <rect x="138" y="428" width="56" height="36" rx="3" fill="#f1f5f9" />
+        <rect x="136" y="460" width="60" height="6" rx="1" fill="#475569" />
+        <polygon points="130,428 166,398 202,428" fill="#a61e1e" />
+        <polygon points="134,428 166,402 198,428" fill="#c92a2a" />
+        <rect x="158" y="438" width="16" height="24" fill="#334155" rx="1.5" />
+        <rect x="144" y="434" width="9" height="12" rx="1" fill="#f4b41a" />
+        <rect x="183" y="434" width="9" height="12" rx="1" fill="#f4b41a" />
+        <line x1="148.5" y1="434" x2="148.5" y2="446" stroke="#7a1414" stroke-width="1" />
+        <line x1="144" y1="440" x2="153" y2="440" stroke="#7a1414" stroke-width="1" />
+        <rect x="184" y="400" width="8" height="16" fill="#7a1414" rx="1" />
 
         <!-- Lighthouse Structure -->
-        <!-- Sturdy Stone Masonry Plinth / Foundation Base -->
-        <polygon points="208,432 284,432 278,392 214,392" fill="#475569" />
-        <polygon points="214,392 278,392 275,386 217,386" fill="#334155" />
-        <rect x="214" y="386" width="64" height="6" rx="2" fill="#1e293b" />
+        <polygon points="208,462 284,462 278,422 214,422" fill="#475569" />
+        <polygon points="214,422 278,422 275,416 217,416" fill="#334155" />
+        <rect x="214" y="416" width="64" height="6" rx="2" fill="#1e293b" />
 
         <!-- Lighthouse Tapered Tower -->
-        <!-- Lower White Masonry Section -->
-        <polygon points="218,386 274,386 267,290 225,290" fill="url(#towerWhiteGrad)" />
-        <!-- Bold Red Middle Band -->
-        <polygon points="225,290 267,290 261,215 231,215" fill="url(#towerRedGrad)" />
-        <!-- Upper White Section -->
-        <polygon points="231,215 261,215 257,185 235,185" fill="url(#towerWhiteGrad)" />
+        <polygon points="218,416 274,416 267,320 225,320" fill="url(#towerWhiteGrad)" />
+        <polygon points="225,320 267,320 261,245 231,245" fill="url(#towerRedGrad)" />
+        <polygon points="231,245 261,245 257,215 235,215" fill="url(#towerWhiteGrad)" />
 
         <!-- Tower Windows -->
-        <rect x="242" y="330" width="9" height="16" rx="2.5" fill="#1e293b" />
-        <rect x="242" y="245" width="9" height="16" rx="2.5" fill="#1e293b" />
+        <rect x="242" y="360" width="9" height="16" rx="2.5" fill="#1e293b" />
+        <rect x="242" y="275" width="9" height="16" rx="2.5" fill="#1e293b" />
 
         <!-- Observation Gallery / Balcony Deck -->
-        <rect x="228" y="180" width="36" height="6" rx="2" fill="#1e293b" />
-        <!-- Gallery Railing -->
-        <line x1="229" y1="174" x2="263" y2="174" stroke="#475569" stroke-width="2" />
-        <line x1="232" y1="174" x2="232" y2="180" stroke="#475569" stroke-width="1.5" />
-        <line x1="240" y1="174" x2="240" y2="180" stroke="#475569" stroke-width="1.5" />
-        <line x1="252" y1="174" x2="252" y2="180" stroke="#475569" stroke-width="1.5" />
-        <line x1="260" y1="174" x2="260" y2="180" stroke="#475569" stroke-width="1.5" />
+        <rect x="228" y="210" width="36" height="6" rx="2" fill="#1e293b" />
+        <line x1="229" y1="204" x2="263" y2="204" stroke="#475569" stroke-width="2" />
+        <line x1="232" y1="204" x2="232" y2="210" stroke="#475569" stroke-width="1.5" />
+        <line x1="240" y1="204" x2="240" y2="210" stroke="#475569" stroke-width="1.5" />
+        <line x1="252" y1="204" x2="252" y2="210" stroke="#475569" stroke-width="1.5" />
+        <line x1="260" y1="204" x2="260" y2="210" stroke="#475569" stroke-width="1.5" />
 
         <!-- Glass Lantern Room -->
-        <rect x="234" y="152" width="24" height="28" fill="#fffbe8" />
-        <rect x="234" y="152" width="24" height="28" fill="none" stroke="#1e293b" stroke-width="3" />
-        <line x1="246" y1="152" x2="246" y2="180" stroke="#1e293b" stroke-width="2" />
+        <rect x="234" y="182" width="24" height="28" fill="#fffbe8" />
+        <rect x="234" y="182" width="24" height="28" fill="none" stroke="#1e293b" stroke-width="3" />
+        <line x1="246" y1="182" x2="246" y2="210" stroke="#1e293b" stroke-width="2" />
 
         <!-- Lantern Dome / Roof & Spire -->
-        <path d="M 232 152 Q 246 128 260 152 Z" fill="#a61e1e" />
-        <circle cx="246" cy="128" r="3.5" fill="#1e293b" />
-        <line x1="246" y1="128" x2="246" y2="118" stroke="#1e293b" stroke-width="2" />
+        <path d="M 232 182 Q 246 158 260 182 Z" fill="#a61e1e" />
+        <circle cx="246" cy="158" r="3.5" fill="#1e293b" />
+        <line x1="246" y1="158" x2="246" y2="148" stroke="#1e293b" stroke-width="2" />
 
         <!-- Spherical Glowing Golden Beacon Light (Gentle & Atmospheric) -->
-        <!-- Ambient Halo -->
-        <circle cx="246" cy="166" r="85" fill="url(#beaconAmbientGlow)" class="beacon-halo-pulse" />
-        <!-- Radiant Inner Core Glow -->
-        <circle cx="246" cy="166" r="32" fill="url(#beaconCoreGlow)" class="beacon-core-pulse" />
-        <!-- Soft Warm Lamp Filament Bulb -->
-        <circle cx="246" cy="166" r="4.5" fill="#fff5d1" opacity="0.85" />
+        <circle cx="246" cy="196" r="85" fill="url(#beaconAmbientGlow)" class="beacon-halo-pulse" />
+        <circle cx="246" cy="196" r="32" fill="url(#beaconCoreGlow)" class="beacon-core-pulse" />
+        <circle cx="246" cy="196" r="4.5" fill="#fff5d1" opacity="0.85" />
       </svg>
     </div>
   </div>
