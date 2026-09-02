@@ -516,6 +516,19 @@ body {
   transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
+.tab-bar__tab[draggable="true"] {
+  cursor: grab;
+}
+
+.tab-bar__tab[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.tab-bar__tab--dragging {
+  opacity: 0.5;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+}
+
 .tab-bar__tab:hover {
   background: color-mix(in srgb, var(--card-strong) 30%, transparent);
   border-color: rgba(255, 255, 255, 0.55);
