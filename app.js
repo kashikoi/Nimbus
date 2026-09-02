@@ -52,7 +52,9 @@
   const WEEKDAYS = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
   const DEFAULT_TAB_ID = "tab-default";
   const CLOUD_SYNC_ENDPOINT = "https://nimbus-sync.nimbus-sync.workers.dev";
-  const CLOUD_SYNC_FORMAT = "nimbus-encrypted-backup-v1";
+  const CLOUD_SYNC_FORMAT = "kashikoi-encrypted-backup-v1";
+  const LEGACY_CLOUD_SYNC_FORMAT = "nimbus-encrypted-backup-v1";
+  const UNIFIED_BACKUP_SCHEMA = "kashikoi-app-backup-v1";
   const CLOUD_KDF_ITERATIONS = 600000;
   const RECOVERY_PHRASE_WORD_COUNT = 16;
   const RECOVERY_WORDS = [
@@ -955,7 +957,7 @@
   }
 
   // Data Export & Import
-  function createBackupData() {
+  function createNimbusBackupData() {
     return {
       version: 2,
       appName: "Nimbus",
@@ -965,6 +967,26 @@
       groups,
       tabs,
       activeTab: activeTabId,
+    };
+  }
+
+  function getExistingBackupApps(existingBackup) {
+    if (!existingBackup || typeof existingBackup !== "object") return {};
+    if (existingBackup.schema === UNIFIED_BACKUP_SCHEMA && existingBackup.apps && typeof existingBackup.apps === "object") return { ...existingBackup.apps };
+    if (existingBackup.appName === "Nimbus" || Array.isArray(existingBackup.tabs)) return { nimbus: existingBackup };
+    if (existingBackup.appName === "Cumulus" || Array.isArray(existingBackup.accounts)) return { cumulus: existingBackup };
+    return {};
+  }
+
+  function createBackupData(existingBackup) {
+    const apps = getExistingBackupApps(existingBackup);
+    apps.nimbus = createNimbusBackupData();
+    return {
+      schema: UNIFIED_BACKUP_SCHEMA,
+      version: 1,
+      appName: "Kashikoi Apps",
+      exportedAt: new Date().toISOString(),
+      apps,
     };
   }
 
@@ -991,15 +1013,16 @@
 
   function normalizeBackupData(data) {
     if (!data || typeof data !== "object") throw new Error("Invalid format");
+    const nimbusData = data.schema === UNIFIED_BACKUP_SCHEMA && data.apps && data.apps.nimbus ? data.apps.nimbus : data;
 
-    const importedTabs = Array.isArray(data.tabs)
-      ? data.tabs.filter((tab) => tab && typeof tab.id === "string" && typeof tab.name === "string")
+    const importedTabs = Array.isArray(nimbusData.tabs)
+      ? nimbusData.tabs.filter((tab) => tab && typeof tab.id === "string" && typeof tab.name === "string")
       : [];
-    const importedTasks = Array.isArray(data.tasks)
-      ? data.tasks.filter((task) => task && typeof task.id === "string" && typeof task.text === "string")
+    const importedTasks = Array.isArray(nimbusData.tasks)
+      ? nimbusData.tasks.filter((task) => task && typeof task.id === "string" && typeof task.text === "string")
       : [];
-    const importedGroups = Array.isArray(data.groups)
-      ? data.groups.filter((group) => group && typeof group.id === "string" && typeof group.name === "string")
+    const importedGroups = Array.isArray(nimbusData.groups)
+      ? nimbusData.groups.filter((group) => group && typeof group.id === "string" && typeof group.name === "string")
       : [];
 
     // Older backups (pre-multi-tab) never captured a tab list. Restoring their tasks/groups
@@ -1016,8 +1039,8 @@
       tabs: importedTabs,
       tasks: importedTasks,
       groups: importedGroups,
-      activeTab: typeof data.activeTab === "string" ? data.activeTab : DEFAULT_TAB_ID,
-      theme: data.theme,
+      activeTab: typeof nimbusData.activeTab === "string" ? nimbusData.activeTab : DEFAULT_TAB_ID,
+      theme: nimbusData.theme,
     };
   }
 
@@ -1105,14 +1128,18 @@
   }
 
   async function getCloudSyncKey(phrase) {
+    return sha256Hex(`kashikoi-cloud-sync-v1:${phrase}`);
+  }
+
+  async function getLegacyCloudSyncKey(phrase) {
     return sha256Hex(`nimbus-sync-location-v1:${phrase}`);
   }
 
-  async function encryptCloudBackup(phrase) {
+  async function encryptCloudBackup(phrase, backupData) {
     const salt = crypto.getRandomValues(new Uint8Array(16));
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const key = await deriveCloudKey(phrase, salt);
-    const plaintext = new TextEncoder().encode(JSON.stringify(createBackupData()));
+    const plaintext = new TextEncoder().encode(JSON.stringify(backupData || createBackupData()));
     const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plaintext);
     return {
       app: "Nimbus",
@@ -1133,7 +1160,7 @@
   }
 
   async function decryptCloudBackup(phrase, envelope) {
-    if (!envelope || envelope.app !== "Nimbus" || envelope.format !== CLOUD_SYNC_FORMAT) {
+    if (!envelope || (envelope.app !== "Nimbus" && envelope.app !== "Cumulus") || (envelope.format !== CLOUD_SYNC_FORMAT && envelope.format !== LEGACY_CLOUD_SYNC_FORMAT)) {
       throw new Error("Invalid envelope");
     }
     const salt = new Uint8Array(base64ToArrayBuffer(envelope.kdf && envelope.kdf.salt));
@@ -1142,6 +1169,29 @@
     const key = await deriveCloudKey(phrase, salt);
     const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, encrypted);
     return JSON.parse(new TextDecoder().decode(decrypted));
+  }
+
+  async function fetchEncryptedBackupAtKey(syncKey) {
+    const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/sync/${syncKey}`, { cache: "no-store" });
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  }
+
+  async function fetchExistingCloudBackup(phrase) {
+    const syncKey = await getCloudSyncKey(phrase);
+    const envelope = await fetchEncryptedBackupAtKey(syncKey);
+    if (envelope) return { syncKey, envelope };
+    const legacySyncKey = await getLegacyCloudSyncKey(phrase);
+    const legacyEnvelope = await fetchEncryptedBackupAtKey(legacySyncKey);
+    return legacyEnvelope ? { syncKey, envelope: legacyEnvelope } : { syncKey, envelope: null };
+  }
+
+  async function createMergedCloudBackup(phrase) {
+    const existing = await fetchExistingCloudBackup(phrase);
+    let existingBackup = null;
+    if (existing.envelope) existingBackup = await decryptCloudBackup(phrase, existing.envelope);
+    return { syncKey: await getCloudSyncKey(phrase), backup: createBackupData(existingBackup) };
   }
 
   function markCloudDataDirty() {
@@ -1168,14 +1218,12 @@
     }
     setCloudDataStatus("Loading encrypted cloud backup...", "info");
     try {
-      const syncKey = await getCloudSyncKey(phrase);
-      const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/sync/${syncKey}`, { cache: "no-store" });
-      if (response.status === 404) {
+      const existing = await fetchExistingCloudBackup(phrase);
+      if (!existing.envelope) {
         setCloudDataStatus("No cloud backup exists for this phrase yet. Save to cloud from the first device first.", "error");
         return;
       }
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await decryptCloudBackup(phrase, await response.json());
+      const data = await decryptCloudBackup(phrase, existing.envelope);
       const restored = restoreBackupData(data, "encrypted cloud sync");
       if (!restored) setCloudDataStatus("Cloud load cancelled.", "info");
     } catch (error) {
@@ -1195,11 +1243,11 @@
     }
     setCloudDataStatus("Encrypting and saving cloud backup...", "info");
     try {
-      const syncKey = await getCloudSyncKey(phrase);
-      const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/sync/${syncKey}`, {
+      const merged = await createMergedCloudBackup(phrase);
+      const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/sync/${merged.syncKey}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(await encryptCloudBackup(phrase)),
+        body: JSON.stringify(await encryptCloudBackup(phrase, merged.backup)),
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       cloudDataDirty = false;
