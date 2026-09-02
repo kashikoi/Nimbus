@@ -47,6 +47,8 @@
   let taskDropCommitted = false;
   let draggedGroupId = null;
   let groupDropCommitted = false;
+  let draggedTabId = null;
+  let tabDropCommitted = false;
   let dragScrollSpeed = 0;
   let dragScrollFrame = null;
   let selectedTaskIds = new Set();
@@ -333,6 +335,8 @@
       const chip = document.createElement("div");
       chip.className = `tab-bar__tab${tab.id === activeTabId ? " tab-bar__tab--active" : ""}`;
       chip.dataset.tabId = tab.id;
+      chip.draggable = tab.id !== DEFAULT_TAB_ID;
+      if (chip.draggable) chip.title = "Drag to reorder tab";
 
       const name = document.createElement("input");
       name.className = "tab-bar__name";
@@ -622,6 +626,51 @@
     const otherTabGroups = groups.filter((group) => group.tabId !== activeTabId);
     groups = [...otherTabGroups, ...reordered];
     saveGroups();
+  }
+
+  function animateTabShuffle(reorder) {
+    const positions = new Map(
+      [...tabBar.querySelectorAll(".tab-bar__tab:not(.tab-bar__tab--dragging)")]
+        .map((chip) => [chip, chip.getBoundingClientRect()])
+    );
+
+    reorder();
+
+    positions.forEach((before, chip) => {
+      const after = chip.getBoundingClientRect();
+      const deltaX = before.left - after.left;
+      if (!deltaX) return;
+      chip.animate(
+        [
+          { transform: `translateX(${deltaX}px)` },
+          { transform: "translateX(0)" },
+        ],
+        { duration: 200, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" }
+      );
+    });
+  }
+
+  function reorderDraggingTab(target, clientX) {
+    // The default tab is never draggable, so bail whenever it's the hover target
+    // to guarantee it can never end up anywhere but first.
+    if (target.dataset.tabId === DEFAULT_TAB_ID) return;
+    const draggedChip = tabBar.querySelector(`[data-tab-id="${draggedTabId}"]`);
+    if (!draggedChip || target === draggedChip) return;
+
+    const targetBounds = target.getBoundingClientRect();
+    const insertAfter = clientX > targetBounds.left + targetBounds.width / 2;
+    const reference = insertAfter ? target.nextSibling : target;
+    if (reference === draggedChip || (target.nextElementSibling === draggedChip && insertAfter)) return;
+    animateTabShuffle(() => tabBar.insertBefore(draggedChip, reference));
+  }
+
+  function saveTabOrder() {
+    const tabOrder = [...tabBar.querySelectorAll(".tab-bar__tab")].map((chip) => chip.dataset.tabId);
+    const reordered = tabOrder.map((tabId) => tabs.find((tab) => tab.id === tabId)).filter(Boolean);
+    const defaultTab = reordered.find((tab) => tab.id === DEFAULT_TAB_ID);
+    const others = reordered.filter((tab) => tab.id !== DEFAULT_TAB_ID);
+    tabs = defaultTab ? [defaultTab, ...others] : reordered;
+    saveTabs();
   }
 
   function reorderDraggingCard(list, target, clientY) {
@@ -1078,6 +1127,42 @@
       if (event.target.closest("button")) return;
       const chip = event.target.closest(".tab-bar__tab");
       if (chip) enterEditMode(chip.querySelector("[data-tab-name]"));
+    });
+
+    tabBar.addEventListener("dragstart", (event) => {
+      const chip = event.target.closest(".tab-bar__tab");
+      if (!chip || !chip.draggable || event.target.closest("input, button")) return;
+      draggedTabId = chip.dataset.tabId;
+      tabDropCommitted = false;
+      chip.classList.add("tab-bar__tab--dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", draggedTabId);
+    });
+
+    tabBar.addEventListener("dragend", (event) => {
+      const chip = event.target.closest(".tab-bar__tab");
+      if (chip) chip.classList.remove("tab-bar__tab--dragging");
+      if (!tabDropCommitted) renderTabs();
+      draggedTabId = null;
+    });
+
+    tabBar.addEventListener("dragover", (event) => {
+      if (!draggedTabId) return;
+      const target = event.target.closest(".tab-bar__tab");
+      if (!target) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      reorderDraggingTab(target, event.clientX);
+    });
+
+    tabBar.addEventListener("drop", (event) => {
+      if (!draggedTabId) return;
+      const target = event.target.closest(".tab-bar__tab");
+      if (!target) return;
+      event.preventDefault();
+      tabDropCommitted = true;
+      saveTabOrder();
+      renderTabs();
     });
   }
 
