@@ -836,6 +836,9 @@
 
   // Atmosphere / Theme Handling (Day, Twilight, Night, Random)
   const themePicker = document.getElementById("theme-picker");
+  // Reset on every script load (page open/refresh) so "random" re-rolls each time,
+  // but stays put for the rest of that page's life once picked.
+  let activeRandomTheme = null;
 
   function getThemePreference() {
     return localStorage.getItem("nimbus.theme") || "night";
@@ -843,12 +846,10 @@
 
   function resolveEffectiveTheme(pref) {
     if (pref === "random") {
-      const cached = sessionStorage.getItem("nimbus.activeRandomTheme");
-      if (cached && ["day", "twilight", "night"].includes(cached)) return cached;
+      if (activeRandomTheme) return activeRandomTheme;
       const modes = ["day", "twilight", "night"];
-      const picked = modes[Math.floor(Math.random() * modes.length)];
-      sessionStorage.setItem("nimbus.activeRandomTheme", picked);
-      return picked;
+      activeRandomTheme = modes[Math.floor(Math.random() * modes.length)];
+      return activeRandomTheme;
     }
     if (pref === "dark") return "night";
     if (pref === "light") return "day";
@@ -1074,7 +1075,7 @@
       if (!chip) return;
       const themeVal = chip.getAttribute("data-theme-val");
       if (themeVal === "random") {
-        sessionStorage.removeItem("nimbus.activeRandomTheme");
+        activeRandomTheme = null;
       }
       applyTheme(themeVal);
     });
