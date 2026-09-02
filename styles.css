@@ -809,6 +809,7 @@ body {
   background: color-mix(in srgb, var(--card-strong) 55%, transparent);
 }
 
+.custom-group__convert,
 .custom-group__delete {
   width: 28px;
   height: 28px;
@@ -824,6 +825,18 @@ body {
   opacity: 0.86;
   text-shadow: 0 1px 2px rgba(4, 10, 22, 0.18);
   transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+
+.custom-group__convert:hover {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+  opacity: 1;
+}
+
+.custom-group__convert:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px;
+  opacity: 1;
 }
 
 .custom-group__delete:hover {

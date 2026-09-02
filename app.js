@@ -208,6 +208,13 @@
       title.dataset.groupName = group.id;
       title.setAttribute("aria-label", "Group name");
 
+      const convertButton = document.createElement("button");
+      convertButton.className = "custom-group__convert";
+      convertButton.type = "button";
+      convertButton.textContent = "📑";
+      convertButton.title = "Convert to tab";
+      convertButton.setAttribute("aria-label", `Convert ${group.name || "group"} to a tab`);
+
       const deleteButton = document.createElement("button");
       deleteButton.className = "custom-group__delete";
       deleteButton.type = "button";
@@ -215,7 +222,7 @@
       deleteButton.title = "Delete group";
       deleteButton.setAttribute("aria-label", `Delete ${group.name || "group"}`);
 
-      heading.append(collapseButton, title, deleteButton);
+      heading.append(collapseButton, title, convertButton, deleteButton);
 
       const list = document.createElement("div");
       list.className = "task-list";
@@ -483,6 +490,33 @@
     saveTasks();
     renderTasks();
     closeMoveActionModal();
+  }
+
+  function convertGroupToTab(groupId) {
+    const group = groups.find((item) => item.id === groupId);
+    if (!group) return;
+    if (!confirm(`Convert "${group.name || "this group"}" to a new tab? Its to-dos will move to the new tab's pending actions.`)) return;
+
+    const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    tabs.push({ id, name: group.name });
+    tasks.forEach((task) => {
+      if (task.day === groupId && task.tabId === group.tabId) {
+        task.tabId = id;
+        task.day = null;
+      }
+    });
+    groups = groups.filter((item) => item.id !== groupId);
+    activeTabId = id;
+
+    saveTabs();
+    saveTasks();
+    saveGroups();
+    saveActiveTabId();
+    clearSelection();
+    renderTabs();
+    updateCanvasVisibility();
+    renderGroups();
+    renderTasks();
   }
 
   function deleteGroup(moveTasks) {
@@ -781,16 +815,22 @@
 
   // Data Export & Import
   function exportData() {
-    const backup = {
-      version: 2,
-      appName: "Nimbus",
-      exportedAt: new Date().toISOString(),
-      theme: getThemePreference(),
-      tasks: JSON.parse(localStorage.getItem("nimbus.tasks") || "[]"),
-      groups: JSON.parse(localStorage.getItem("nimbus.groups") || "[]"),
-      tabs: JSON.parse(localStorage.getItem("nimbus.tabs") || "[]"),
-      activeTab: localStorage.getItem("nimbus.activeTab") || DEFAULT_TAB_ID,
-    };
+    let backup;
+    try {
+      backup = {
+        version: 2,
+        appName: "Nimbus",
+        exportedAt: new Date().toISOString(),
+        theme: getThemePreference(),
+        tasks: JSON.parse(localStorage.getItem("nimbus.tasks") || "[]"),
+        groups: JSON.parse(localStorage.getItem("nimbus.groups") || "[]"),
+        tabs: JSON.parse(localStorage.getItem("nimbus.tabs") || "[]"),
+        activeTab: localStorage.getItem("nimbus.activeTab") || DEFAULT_TAB_ID,
+      };
+    } catch (error) {
+      alert("Export failed: stored data appears corrupted. Try reloading the app first.");
+      return;
+    }
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -811,10 +851,33 @@
       try {
         const data = JSON.parse(evt.target.result);
         if (!data || typeof data !== "object") throw new Error("Invalid format");
-        if (confirm("Restore data from backup? This will overwrite your current tasks, groups, and tabs.")) {
-          if (Array.isArray(data.tasks)) localStorage.setItem("nimbus.tasks", JSON.stringify(data.tasks));
-          if (Array.isArray(data.groups)) localStorage.setItem("nimbus.groups", JSON.stringify(data.groups));
-          if (Array.isArray(data.tabs) && data.tabs.length) localStorage.setItem("nimbus.tabs", JSON.stringify(data.tabs));
+
+        const importedTabs = Array.isArray(data.tabs)
+          ? data.tabs.filter((tab) => tab && typeof tab.id === "string" && typeof tab.name === "string")
+          : [];
+        const importedTasks = Array.isArray(data.tasks)
+          ? data.tasks.filter((task) => task && typeof task.id === "string" && typeof task.text === "string")
+          : [];
+        const importedGroups = Array.isArray(data.groups)
+          ? data.groups.filter((group) => group && typeof group.id === "string" && typeof group.name === "string")
+          : [];
+
+        // Older backups (pre-multi-tab) never captured a tab list. Restoring their tasks/groups
+        // would otherwise leave the current tab list untouched while wiping every tab's content,
+        // so refuse anything that doesn't describe a full tab set instead of silently doing that.
+        if (!importedTabs.length) {
+          alert("Failed to import: this backup doesn't include any tabs (it may be from an older version of Nimbus). Please use a backup made with a newer version.");
+          return;
+        }
+        if (!importedTabs.some((tab) => tab.id === DEFAULT_TAB_ID)) {
+          importedTabs.unshift({ id: DEFAULT_TAB_ID, name: "This Week" });
+        }
+
+        const summary = `${importedTabs.length} tab${importedTabs.length === 1 ? "" : "s"}, ${importedGroups.length} group${importedGroups.length === 1 ? "" : "s"}, and ${importedTasks.length} action${importedTasks.length === 1 ? "" : "s"}`;
+        if (confirm(`Restore ${summary} from this backup? This will overwrite your current tasks, groups, and tabs and cannot be undone.`)) {
+          localStorage.setItem("nimbus.tabs", JSON.stringify(importedTabs));
+          localStorage.setItem("nimbus.tasks", JSON.stringify(importedTasks));
+          localStorage.setItem("nimbus.groups", JSON.stringify(importedGroups));
           if (typeof data.activeTab === "string") localStorage.setItem("nimbus.activeTab", data.activeTab);
           if (data.theme) localStorage.setItem("nimbus.theme", data.theme);
           location.reload();
@@ -1097,6 +1160,11 @@
       const moveButton = event.target.closest(".task-card__move");
       if (moveButton) {
         openMoveActionModal(moveButton.closest(".task-card").dataset.taskId);
+        return;
+      }
+      const groupConvertButton = event.target.closest(".custom-group__convert");
+      if (groupConvertButton) {
+        convertGroupToTab(groupConvertButton.closest(".custom-group").dataset.groupId);
         return;
       }
       const groupDeleteButton = event.target.closest(".custom-group__delete");
