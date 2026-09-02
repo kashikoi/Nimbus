@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Nimbus">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#65b8f0"/>
+      <stop offset="0.58" stop-color="#a7ddfb"/>
+      <stop offset="1" stop-color="#fff1c6"/>
+    </linearGradient>
+    <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4eb5dd"/>
+      <stop offset="0.58" stop-color="#1676a8"/>
+      <stop offset="1" stop-color="#0a4168"/>
+    </linearGradient>
+    <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f4b41a" stop-opacity="0.9"/>
+      <stop offset="0.3" stop-color="#f4b41a" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#f4b41a" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="beaconGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffef7"/>
+      <stop offset="40%" stop-color="#ffd166" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#ffb703" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- App Icon Background Tile -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#skyGrad)"/>
+
+  <!-- Distant Nimbus Clouds -->
+  <path d="M 40 220 Q 90 140 170 170 Q 230 110 320 150 Q 410 120 480 190 Q 512 240 480 290 L 40 290 Z" fill="#ffffff" fill-opacity="0.38"/>
+
+  <!-- Ocean in Icon -->
+  <path d="M 0 320 L 512 320 L 512 512 L 0 512 Z" fill="url(#oceanGrad)"/>
+
+  <!-- Rocky Headland with Coastal Grass -->
+  <path d="M 0 420 Q 90 410 160 435 Q 220 460 300 485 L 300 512 L 0 512 Z" fill="#647887"/>
+  <path d="M 0 410 Q 70 395 130 405 Q 180 415 220 445 L 0 445 Z" fill="#6aa96a"/>
+  <path d="M 0 435 Q 90 425 180 450 Q 240 475 300 495" fill="none" stroke="#f8fdff" stroke-width="4" opacity="0.86"/>
+
+  <!-- Lighthouse Spherical Glow -->
+  <circle cx="120" cy="225" r="36" fill="url(#beaconGlow)"/>
+
+  <!-- Lighthouse -->
+  <!-- Cottage (Attached to Tower) -->
+  <rect x="56" y="378" width="44" height="32" rx="2" fill="#f8f9fa"/>
+  <polygon points="50,378 76,356 102,378" fill="#c1121f"/>
+  <rect x="68" y="388" width="10" height="22" fill="#293241" rx="1"/>
+  <!-- Tower Base -->
+  <polygon points="90,410 150,410 142,240 98,240" fill="#f8f9fa"/>
+  <!-- Red Stripes on Tower -->
+  <polygon points="93.5,350 146.5,350 144,305 96,305" fill="#c1121f"/>
+  <!-- Windows -->
+  <rect x="116" y="270" width="8" height="14" rx="2" fill="#293241"/>
+  <rect x="116" y="370" width="8" height="14" rx="2" fill="#293241"/>
+  <!-- Balcony / Deck -->
+  <rect x="92" y="236" width="56" height="6" rx="2" fill="#293241"/>
+  <!-- Lantern Room -->
+  <rect x="100" y="210" width="40" height="26" fill="#ffd166" fill-opacity="0.95"/>
+  <rect x="100" y="210" width="40" height="26" stroke="#293241" stroke-width="4" fill="none"/>
+  <line x1="120" y1="210" x2="120" y2="236" stroke="#293241" stroke-width="3"/>
+  <!-- Dome / Roof -->
+  <path d="M 96 210 Q 120 185 144 210 Z" fill="#c1121f"/>
+  <circle cx="120" cy="188" r="4" fill="#293241"/>
+</svg>
