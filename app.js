@@ -51,6 +51,7 @@
   let selectionAnchorId = null;
   let tabs = loadTabs();
   let activeTabId = loadActiveTabId();
+  if (!tabs.some((tab) => tab.id === activeTabId)) activeTabId = DEFAULT_TAB_ID;
   let tasks = loadTasks();
   let groups = loadGroups();
   let groupPendingDeletion = null;
@@ -771,12 +772,11 @@
   // Data Export & Import
   function exportData() {
     const backup = {
-      version: 1,
+      version: 2,
       appName: "Nimbus",
       exportedAt: new Date().toISOString(),
       theme: getThemePreference(),
       tasks: JSON.parse(localStorage.getItem("nimbus.tasks") || "[]"),
-      lists: JSON.parse(localStorage.getItem("nimbus.lists") || "[]"),
       groups: JSON.parse(localStorage.getItem("nimbus.groups") || "[]"),
       tabs: JSON.parse(localStorage.getItem("nimbus.tabs") || "[]"),
       activeTab: localStorage.getItem("nimbus.activeTab") || DEFAULT_TAB_ID,
@@ -801,11 +801,10 @@
       try {
         const data = JSON.parse(evt.target.result);
         if (!data || typeof data !== "object") throw new Error("Invalid format");
-        if (confirm("Restore data from backup? This will overwrite your current tasks.")) {
+        if (confirm("Restore data from backup? This will overwrite your current tasks, groups, and tabs.")) {
           if (Array.isArray(data.tasks)) localStorage.setItem("nimbus.tasks", JSON.stringify(data.tasks));
-          if (Array.isArray(data.lists)) localStorage.setItem("nimbus.lists", JSON.stringify(data.lists));
           if (Array.isArray(data.groups)) localStorage.setItem("nimbus.groups", JSON.stringify(data.groups));
-          if (Array.isArray(data.tabs)) localStorage.setItem("nimbus.tabs", JSON.stringify(data.tabs));
+          if (Array.isArray(data.tabs) && data.tabs.length) localStorage.setItem("nimbus.tabs", JSON.stringify(data.tabs));
           if (typeof data.activeTab === "string") localStorage.setItem("nimbus.activeTab", data.activeTab);
           if (data.theme) localStorage.setItem("nimbus.theme", data.theme);
           location.reload();
@@ -819,9 +818,8 @@
   }
 
   function clearData() {
-    if (confirm("Are you sure you want to clear all tasks and lists? This cannot be undone.")) {
+    if (confirm("Are you sure you want to clear all tasks, groups, and tabs? This cannot be undone.")) {
       localStorage.removeItem("nimbus.tasks");
-      localStorage.removeItem("nimbus.lists");
       localStorage.removeItem("nimbus.groups");
       localStorage.removeItem("nimbus.tabs");
       localStorage.removeItem("nimbus.activeTab");
@@ -830,37 +828,73 @@
   }
 
   function randomizeDemoData() {
-    if (!confirm("Replace your current to-dos with demo data? Export first if you want to keep them.")) return;
+    if (!confirm("Replace all tabs, actions, and groups with a multi-tab demo? Export first if you want to keep them.")) return;
 
-    const demoItems = [
-      ["Pick up fresh flowers", null, true],
-      ["Choose a recipe for the week", null, false],
-      ["Call the dentist", null, false],
-      ["Organize photo library", "demo-home", false],
-      ["Research weekend getaway", "demo-home", false],
-      ["Refill travel mug", "saturday", true],
-      ["Morning trail walk", "saturday", false],
-      ["Order pantry staples", "saturday", false],
-      ["Slow breakfast", "sunday", true],
-      ["Plan meals and groceries", "sunday", false],
-      ["Set out Monday clothes", "sunday", false],
-      ["Review weekly priorities", "monday", false],
-      ["Send project update", "monday", false],
-      ["Book focus time", "tuesday", false],
-      ["Water the plants", "wednesday", false],
-      ["Laundry load", "thursday", false],
-      ["Close out the week", "friday", false],
+    const demoTabs = [
+      {
+        id: DEFAULT_TAB_ID,
+        name: "This Week",
+        groups: [{ id: "demo-home", name: "Home projects" }],
+        items: [
+          ["Pick up fresh flowers", null, true],
+          ["Choose a recipe for the week", null, false],
+          ["Call the dentist", null, false],
+          ["Organize photo library", "demo-home", false],
+          ["Research weekend getaway", "demo-home", false],
+          ["Refill travel mug", "saturday", true],
+          ["Morning trail walk", "saturday", false],
+          ["Order pantry staples", "saturday", false],
+          ["Slow breakfast", "sunday", true],
+          ["Plan meals and groceries", "sunday", false],
+          ["Set out Monday clothes", "sunday", false],
+          ["Review weekly priorities", "monday", false],
+          ["Send project update", "monday", false],
+          ["Book focus time", "tuesday", false],
+          ["Water the plants", "wednesday", false],
+          ["Laundry load", "thursday", false],
+          ["Close out the week", "friday", false],
+        ],
+      },
+      {
+        id: "demo-tab-side-projects",
+        name: "Side Projects",
+        groups: [
+          { id: "demo-launch", name: "Website relaunch" },
+          { id: "demo-garage", name: "Garage cleanup" },
+        ],
+        items: [
+          ["Sketch new homepage layout", "demo-launch", false],
+          ["Pick a hosting plan", "demo-launch", true],
+          ["Write launch announcement", "demo-launch", false],
+          ["Sort tools onto pegboard", "demo-garage", false],
+          ["Donate old paint cans", "demo-garage", false],
+          ["Label storage bins", "demo-garage", true],
+          ["Research bike rack options", null, false],
+        ],
+      },
+      {
+        id: "demo-tab-someday",
+        name: "Someday",
+        groups: [{ id: "demo-travel", name: "Travel wishlist" }],
+        items: [
+          ["Learn to bake sourdough", null, false],
+          ["Plan a long weekend hike", "demo-travel", false],
+          ["Look into a used kayak", "demo-travel", false],
+          ["Read that stack of novels", null, true],
+        ],
+      },
     ];
 
-    groups = [{ id: "demo-home", tabId: DEFAULT_TAB_ID, name: "Home projects" }];
-    tasks = demoItems.map(([text, day, done], index) => ({
-      id: `demo-${Date.now()}-${index}`,
-      text,
-      day,
-      done,
-      tabId: DEFAULT_TAB_ID,
-    }));
-    tabs = [{ id: DEFAULT_TAB_ID, name: "This Week" }];
+    let counter = 0;
+    groups = [];
+    tasks = [];
+    tabs = demoTabs.map((tab) => ({ id: tab.id, name: tab.name }));
+    demoTabs.forEach((tab) => {
+      tab.groups.forEach((group) => groups.push({ ...group, tabId: tab.id }));
+      tab.items.forEach(([text, day, done]) => {
+        tasks.push({ id: `demo-${Date.now()}-${counter++}`, text, day, done, tabId: tab.id });
+      });
+    });
     activeTabId = DEFAULT_TAB_ID;
     saveTasks();
     saveGroups();
@@ -1028,7 +1062,8 @@
 
     app.addEventListener("click", (event) => {
       const selectableCard = event.target.closest(".task-card");
-      if (selectableCard && !event.target.closest("button, input, textarea")) {
+      const editingTextarea = event.target.closest("textarea:not([readonly])");
+      if (selectableCard && !event.target.closest("button, input") && !editingTextarea) {
         if (event.metaKey || event.ctrlKey) {
           toggleTaskSelection(selectableCard.dataset.taskId);
           return;
