@@ -563,7 +563,10 @@
     });
 
     const taskOrder = [...app.querySelectorAll(".task-list .task-card")].map((card) => card.dataset.taskId);
-    tasks = taskOrder.map((taskId) => tasks.find((task) => task.id === taskId)).filter(Boolean);
+    // Only the active tab's cards are in the DOM, so keep every other tab's tasks intact.
+    const otherTabTasks = tasks.filter((task) => task.tabId !== activeTabId);
+    const reordered = taskOrder.map((taskId) => tasks.find((task) => task.id === taskId)).filter(Boolean);
+    tasks = [...otherTabTasks, ...reordered];
     saveTasks();
   }
 
