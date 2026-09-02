@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nimbus</title>
   <meta name="theme-color" content="#7ec0ee" />
-  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01.50" />
-  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01.50" />
-  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01.50" />
-  <link rel="stylesheet" href="styles.css?v=2026.09.01.50" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.02.51" />
+  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.02.51" />
+  <link rel="manifest" href="manifest.webmanifest?v=2026.09.02.51" />
+  <link rel="stylesheet" href="styles.css?v=2026.09.02.51" />
   <script>
     // Set theme class before first paint to prevent flash
     try {
@@ -98,6 +98,13 @@
             <stop offset="0%" stop-color="#a3c9a8" stop-opacity="0.9" />
             <stop offset="50%" stop-color="#7fa984" stop-opacity="0.75" />
             <stop offset="100%" stop-color="#4e7350" stop-opacity="0.2" />
+          </linearGradient>
+
+          <!-- Exposed Cliff Face Below the Grassy Plateau -->
+          <linearGradient id="cliffFaceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#536473" />
+            <stop offset="48%" stop-color="#34434f" />
+            <stop offset="100%" stop-color="#202c37" />
           </linearGradient>
 
           <!-- Surf / Foam Gradient -->
@@ -191,14 +198,29 @@
                  C 50 415, 110 420, 160 425 
                  C 210 430, 260 428, 320 442 
                  C 380 455, 430 465, 480 495 
-                 C 450 505, 400 495, 340 478 
-                 C 270 465, 200 458, 130 455 
-                 C 70 452, 20 458, 0 465 Z" 
+               C 540 515, 610 545, 685 565
+                C 650 580, 590 585, 530 578
+                C 445 568, 360 555, 275 550
+                C 175 544, 80 548, 0 560 Z"
               fill="url(#grassGrad)" />
 
         <!-- Grassy Knoll Turf Highlights & Texture -->
-        <path d="M 0 430 C 60 422, 130 426, 190 432 C 260 436, 330 450, 420 478 C 450 488, 470 498, 480 495" 
+            <path d="M 0 430 C 60 422, 130 426, 190 432 C 260 436, 330 450, 420 478 C 510 510, 590 548, 660 566"
               fill="none" stroke="url(#grassHighlight)" stroke-width="4.5" stroke-linecap="round" />
+
+              <!-- Exposed Cliff Face Dropping Toward the Lower Shoreline -->
+              <path d="M 0 560
+                   C 80 548, 175 544, 275 550
+                   C 360 555, 445 568, 530 578
+                   C 590 585, 650 580, 685 565
+                   C 730 595, 775 625, 825 650
+                   C 740 678, 660 697, 580 700
+                   L 0 700 Z"
+                fill="url(#cliffFaceGrad)" />
+              <path d="M 30 585 C 145 570, 260 580, 370 594 C 475 608, 570 616, 655 604"
+                fill="none" stroke="#718292" stroke-width="5" stroke-linecap="round" opacity="0.72" />
+              <path d="M 0 632 C 120 618, 230 632, 340 650 C 445 667, 530 675, 610 662"
+                fill="none" stroke="#263440" stroke-width="7" stroke-linecap="round" opacity="0.9" />
 
         <!-- Crashing Ocean Surf & White Water Foam along the Entire Shoreline -->
         <path d="M 0 495 C 90 478 190 498 270 512 C 360 528 450 565 550 625 C 650 660 760 670 880 682 C 1010 694 1150 696 1300 698 C 1450 700 1550 700 1600 700" 
@@ -211,7 +233,6 @@
         <!-- Keeper's Cottage / Quarters (Attached to the Lighthouse Base) -->
         <!-- Cottage Main Body & Connecting Wing extending into the tower plinth -->
         <rect x="146" y="425" width="76" height="39" rx="2" fill="#f1f5f9" />
-        <rect x="144" y="458" width="78" height="7" rx="1" fill="#475569" />
         <!-- Cottage Pitched Roof -->
         <polygon points="140,425 180,394 222,425" fill="#a61e1e" />
         <polygon points="144,425 180,398 218,425" fill="#c92a2a" />
@@ -220,7 +241,8 @@
         <!-- Cottage Chimney -->
         <rect x="156" y="396" width="8" height="18" fill="#7a1414" rx="1" />
 
-        <!-- Lighthouse Structure -->
+        <!-- Lighthouse Structure (shifted down to align base with cottage bottom) -->
+        <g transform="translate(0,2)">
         <polygon points="208,462 284,462 278,422 214,422" fill="#475569" />
         <polygon points="214,422 278,422 275,416 217,416" fill="#334155" />
         <rect x="214" y="416" width="64" height="6" rx="2" fill="#1e293b" />
@@ -256,6 +278,7 @@
         <circle cx="246" cy="196" r="85" fill="url(#beaconAmbientGlow)" class="beacon-halo-pulse" />
         <circle cx="246" cy="196" r="32" fill="url(#beaconCoreGlow)" class="beacon-core-pulse" />
         <circle cx="246" cy="196" r="4.5" fill="#fff5d1" opacity="0.85" />
+        </g>
       </svg>
     </div>
   </div>
@@ -263,7 +286,7 @@
   <main class="app">
     <header class="app__header">
       <div class="brand">
-        <img class="brand__mark" src="icon.svg?v=2026.09.01.50" alt="Nimbus icon" width="56" height="56" />
+        <img class="brand__mark" src="icon.svg?v=2026.09.02.51" alt="Nimbus icon" width="56" height="56" />
         <div class="brand__text">
           <h1 class="app__title">Nimbus</h1>
           <p class="app__subtitle">Chart your course, one day at a time.</p>
@@ -462,6 +485,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=2026.09.01.50"></script>
+  <script src="app.js?v=2026.09.02.51"></script>
 </body>
 </html>

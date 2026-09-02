@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nimbus - Tutorial</title>
   <meta name="theme-color" content="#7ec0ee" />
-  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01.50" />
-  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01.50" />
-  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01.50" />
-  <link rel="stylesheet" href="styles.css?v=2026.09.01.50" />
-  <link rel="stylesheet" href="tutorial.css?v=2026.09.01.50" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.02.51" />
+  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.02.51" />
+  <link rel="manifest" href="manifest.webmanifest?v=2026.09.02.51" />
+  <link rel="stylesheet" href="styles.css?v=2026.09.02.51" />
+  <link rel="stylesheet" href="tutorial.css?v=2026.09.02.51" />
   <script>
     try {
       const pref = localStorage.getItem("nimbus.theme") || "night";
@@ -42,7 +42,7 @@
   <main class="app tutorial">
     <header class="app__header">
       <div class="brand">
-        <img class="brand__mark" src="icon.svg?v=2026.09.01.50" alt="" width="56" height="56" />
+        <img class="brand__mark" src="icon.svg?v=2026.09.02.51" alt="" width="56" height="56" />
         <div class="brand__text">
           <h1 class="app__title">Nimbus</h1>
           <p class="app__subtitle">The 3-minute tour.</p>
@@ -68,13 +68,14 @@
 
     <nav class="tut-nav" aria-label="Jump to a topic">
       <a href="#step-1">Add actions</a>
-      <a href="#step-2">Edit inline</a>
-      <a href="#step-3">Plan the week</a>
-      <a href="#step-4">Custom groups</a>
-      <a href="#step-5">Rearrange</a>
-      <a href="#step-6">Finish &amp; delete</a>
-      <a href="#step-7">Demo data</a>
-      <a href="#step-8">Backup</a>
+      <a href="#step-2">Use tabs</a>
+      <a href="#step-3">Edit inline</a>
+      <a href="#step-4">Plan the week</a>
+      <a href="#step-5">Custom groups</a>
+      <a href="#step-6">Rearrange</a>
+      <a href="#step-7">Finish &amp; delete</a>
+      <a href="#step-8">Demo data</a>
+      <a href="#step-9">Backup</a>
     </nav>
 
     <ol class="tut-steps">
@@ -96,6 +97,21 @@
       <li class="tut-step" id="step-2">
         <div class="tut-step__num">2</div>
         <div class="tut-step__body">
+          <h3>Split your world into tabs</h3>
+          <p>
+            The tab bar under the header holds separate boards. <strong>This Week</strong> is the
+            default tab and the only one with the Saturday-through-Friday week columns; click
+            <strong>+</strong> to add another tab for a project or focus list with its own actions
+            and custom groups. Click a tab's name to rename it, and use its <strong>×</strong> to
+            delete it (This Week cannot be deleted).
+          </p>
+          <p class="tut-note">Deleting a tab removes its actions and custom groups too, so move anything you want to keep first.</p>
+        </div>
+      </li>
+
+      <li class="tut-step" id="step-3">
+        <div class="tut-step__num">3</div>
+        <div class="tut-step__body">
           <h3>Edit where the words already are</h3>
           <p>
             Actions look like finished cards, but the text itself is editable. Click the words,
@@ -105,8 +121,8 @@
         </div>
       </li>
 
-      <li class="tut-step" id="step-3">
-        <div class="tut-step__num">3</div>
+      <li class="tut-step" id="step-4">
+        <div class="tut-step__num">4</div>
         <div class="tut-step__body">
           <h3>Build a Saturday-first week</h3>
           <p>
@@ -118,20 +134,21 @@
         </div>
       </li>
 
-      <li class="tut-step" id="step-4">
-        <div class="tut-step__num">4</div>
+      <li class="tut-step" id="step-5">
+        <div class="tut-step__num">5</div>
         <div class="tut-step__body">
           <h3>Create your own holding areas</h3>
           <p>
             Use <strong>Add Group</strong> to create a blank custom group below the week. Name it
             inline, then drag actions into it for project buckets, errands, waiting-for items, or
-            anything you want to save outside the weekly plan.
+            anything you want to save outside the weekly plan. Groups belong to the tab they were
+            created in, so each board keeps its own set.
           </p>
         </div>
       </li>
 
-      <li class="tut-step" id="step-5">
-        <div class="tut-step__num">5</div>
+      <li class="tut-step" id="step-6">
+        <div class="tut-step__num">6</div>
         <div class="tut-step__body">
           <h3>Drag things until they feel right</h3>
           <p>
@@ -143,8 +160,8 @@
         </div>
       </li>
 
-      <li class="tut-step" id="step-6">
-        <div class="tut-step__num">6</div>
+      <li class="tut-step" id="step-7">
+        <div class="tut-step__num">7</div>
         <div class="tut-step__body">
           <h3>Check off, clean up, or remove a group</h3>
           <p>
@@ -155,25 +172,28 @@
         </div>
       </li>
 
-      <li class="tut-step" id="step-7">
-        <div class="tut-step__num">7</div>
+      <li class="tut-step" id="step-8">
+        <div class="tut-step__num">8</div>
         <div class="tut-step__body">
           <h3>Try a realistic sample week</h3>
           <p>
-            Open Settings and use <strong>Randomize data (demo)</strong> to load a lived-in sample:
-            unassigned actions, scheduled day cards, completed items, and a custom group. It is the
-            fastest way to see how Nimbus behaves once it has real texture.
+            Open Settings and use <strong>Randomize data (demo)</strong> to load a lived-in sample
+            across three tabs: <strong>This Week</strong> (day cards, done items, a custom group),
+            <strong>Side Projects</strong>, and <strong>Someday</strong>, each with their own actions
+            and groups. It replaces every existing tab, so export first if you want to keep yours.
           </p>
         </div>
       </li>
 
-      <li class="tut-step" id="step-8">
-        <div class="tut-step__num">8</div>
+      <li class="tut-step" id="step-9">
+        <div class="tut-step__num">9</div>
         <div class="tut-step__body">
           <h3>Settings, backup, and atmosphere</h3>
           <p>
             Settings holds the atmosphere picker, export/import, demo data, and clear-data control.
-            Export saves your actions, custom groups, done states, order, and theme into one JSON file.
+            Export saves every tab, its actions and custom groups, done states, order, and theme into
+            one JSON file. Import restores all of it and replaces what is currently on this device;
+            Clear all data wipes tasks, groups, and tabs back to a blank This Week.
           </p>
         </div>
       </li>
