@@ -14,6 +14,16 @@
   const exportDataBtn = document.getElementById("export-data-btn");
   const importDataBtn = document.getElementById("import-data-btn");
   const importFileInput = document.getElementById("import-file-input");
+  const cloudPhraseInput = document.getElementById("cloud-phrase");
+  const toggleCloudPhraseBtn = document.getElementById("toggle-cloud-phrase-btn");
+  const generateCloudPhraseBtn = document.getElementById("generate-cloud-phrase-btn");
+  const cloudPhraseOutput = document.getElementById("cloud-phrase-output");
+  const cloudLoadDataBtn = document.getElementById("cloud-load-data-btn");
+  const cloudSaveDataBtn = document.getElementById("cloud-save-data-btn");
+  const downloadEncryptedDataBtn = document.getElementById("download-encrypted-data-btn");
+  const importEncryptedDataBtn = document.getElementById("import-encrypted-data-btn");
+  const importEncryptedFileInput = document.getElementById("import-encrypted-file-input");
+  const cloudDataStatus = document.getElementById("cloud-data-status");
   const randomizeDataBtn = document.getElementById("randomize-data-btn");
   const clearDataBtn = document.getElementById("clear-data-btn");
   const app = document.querySelector(".app");
@@ -41,6 +51,28 @@
   const moveActionList = document.getElementById("move-action-list");
   const WEEKDAYS = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
   const DEFAULT_TAB_ID = "tab-default";
+  const CLOUD_SYNC_ENDPOINT = "https://nimbus-sync.nimbus-sync.workers.dev";
+  const CLOUD_SYNC_FORMAT = "nimbus-encrypted-backup-v1";
+  const CLOUD_KDF_ITERATIONS = 600000;
+  const RECOVERY_PHRASE_WORD_COUNT = 16;
+  const RECOVERY_WORDS = [
+    "anchor", "apricot", "arbor", "atlas", "autumn", "baker", "bamboo", "beacon", "birch", "breeze", "brook", "cabin", "cactus", "canvas", "cedar", "cinder",
+    "clover", "cobalt", "comet", "copper", "coral", "cotton", "cricket", "daisy", "delta", "denim", "dolphin", "dragon", "ember", "falcon", "fennel", "field",
+    "forest", "fossil", "garden", "ginger", "glacier", "harbor", "hazel", "honest", "indigo", "island", "jacket", "jasper", "juniper", "kernel", "lagoon", "lantern",
+    "laurel", "lemon", "linen", "lotus", "maple", "marble", "meadow", "meteor", "misty", "nectar", "nickel", "oasis", "olive", "onward", "orchid", "otter",
+    "palace", "paper", "pepper", "plume", "pocket", "prairie", "quartz", "quiet", "rabbit", "raven", "river", "rocket", "saffron", "sailor", "shadow", "silver",
+    "sincere", "sketch", "spring", "stone", "sunset", "tandem", "timber", "topaz", "tulip", "velvet", "violet", "walnut", "willow", "window", "winter", "zephyr",
+    "acorn", "almond", "amber", "artist", "basket", "blossom", "border", "bottle", "branch", "bridge", "butter", "castle", "cherry", "circle", "coffee", "compass",
+    "dancer", "desert", "doctor", "engine", "fabric", "feather", "flower", "galaxy", "gentle", "golden", "guitar", "hammer", "helmet", "hollow", "jungle", "ladder",
+    "magnet", "market", "mirror", "mother", "museum", "napkin", "needle", "orange", "pencil", "picnic", "planet", "puzzle", "ribbon", "saddle", "school", "secret",
+    "signal", "smooth", "spirit", "summer", "thunder", "ticket", "tomato", "tunnel", "wander", "whisper", "yellow", "zipper", "agenda", "bright", "camera", "donut",
+    "eagle", "fable", "glimmer", "horizon", "icicle", "jovial", "keeper", "lively", "mellow", "native", "opal", "pastel", "quiver", "relish", "shelter", "tropic",
+    "uplift", "voyage", "wonder", "yonder", "zenith", "banjo", "boulder", "carpet", "daring", "estate", "frozen", "gravel", "humble", "inlet", "joyful", "kettle",
+    "little", "memory", "narrow", "object", "pebble", "quaint", "reward", "season", "tablet", "unison", "valley", "wealth", "yearly", "zesty", "banyan", "canopy",
+    "detail", "effort", "future", "gather", "honor", "inside", "jigsaw", "kitten", "legacy", "motion", "number", "option", "poetry", "radial", "sample", "temple",
+    "unique", "vision", "weekly", "yogurt", "zodiac", "bistro", "cloud", "drift", "echo", "fluent", "groove", "haven", "impact", "jewel", "kindle", "lunar",
+    "minute", "novel", "origin", "parcel", "quorum", "rescue", "sierra", "travel", "useful", "volume", "waffle", "yearn", "zinnia", "apollo", "brisk", "crystal",
+  ];
   const isMobile = window.matchMedia("(pointer: coarse), (max-width: 720px)");
   let draggedTaskId = null;
   let draggedTaskIds = [];
@@ -63,6 +95,7 @@
   let groupPendingDeletion = null;
   let actionPendingMove = null;
   let tabPendingDeletion = null;
+  let cloudDataDirty = false;
 
   function updateMobileMode() {
     document.documentElement.classList.toggle("mobile", isMobile.matches);
@@ -109,6 +142,7 @@
 
   function saveTabs() {
     localStorage.setItem("nimbus.tabs", JSON.stringify(tabs));
+    markCloudDataDirty();
   }
 
   function loadActiveTabId() {
@@ -117,10 +151,12 @@
 
   function saveActiveTabId() {
     localStorage.setItem("nimbus.activeTab", activeTabId);
+    markCloudDataDirty();
   }
 
   function saveTasks() {
     localStorage.setItem("nimbus.tasks", JSON.stringify(tasks));
+    markCloudDataDirty();
   }
 
   function fitActionHeight(textarea) {
@@ -147,6 +183,7 @@
 
   function saveGroups() {
     localStorage.setItem("nimbus.groups", JSON.stringify(groups));
+    markCloudDataDirty();
   }
 
   function syncCustomGroupListState(list, collapsed) {
@@ -918,33 +955,84 @@
   }
 
   // Data Export & Import
-  function exportData() {
-    let backup;
-    try {
-      backup = {
-        version: 2,
-        appName: "Nimbus",
-        exportedAt: new Date().toISOString(),
-        theme: getThemePreference(),
-        tasks: JSON.parse(localStorage.getItem("nimbus.tasks") || "[]"),
-        groups: JSON.parse(localStorage.getItem("nimbus.groups") || "[]"),
-        tabs: JSON.parse(localStorage.getItem("nimbus.tabs") || "[]"),
-        activeTab: localStorage.getItem("nimbus.activeTab") || DEFAULT_TAB_ID,
-      };
-    } catch (error) {
-      alert("Export failed: stored data appears corrupted. Try reloading the app first.");
-      return;
-    }
+  function createBackupData() {
+    return {
+      version: 2,
+      appName: "Nimbus",
+      exportedAt: new Date().toISOString(),
+      theme: getThemePreference(),
+      tasks,
+      groups,
+      tabs,
+      activeTab: activeTabId,
+    };
+  }
+
+  function downloadBackup(backup, filename) {
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    const dateStr = new Date().toISOString().slice(0, 10);
     a.href = url;
-    a.download = `nimbus-backup-${dateStr}.json`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  function exportData() {
+    try {
+      const dateStr = new Date().toISOString().slice(0, 10);
+      downloadBackup(createBackupData(), `nimbus-backup-${dateStr}.json`);
+    } catch (error) {
+      alert("Export failed: stored data appears corrupted. Try reloading the app first.");
+    }
+  }
+
+  function normalizeBackupData(data) {
+    if (!data || typeof data !== "object") throw new Error("Invalid format");
+
+    const importedTabs = Array.isArray(data.tabs)
+      ? data.tabs.filter((tab) => tab && typeof tab.id === "string" && typeof tab.name === "string")
+      : [];
+    const importedTasks = Array.isArray(data.tasks)
+      ? data.tasks.filter((task) => task && typeof task.id === "string" && typeof task.text === "string")
+      : [];
+    const importedGroups = Array.isArray(data.groups)
+      ? data.groups.filter((group) => group && typeof group.id === "string" && typeof group.name === "string")
+      : [];
+
+    // Older backups (pre-multi-tab) never captured a tab list. Restoring their tasks/groups
+    // would otherwise leave the current tab list untouched while wiping every tab's content,
+    // so refuse anything that doesn't describe a full tab set instead of silently doing that.
+    if (!importedTabs.length) {
+      throw new Error("Missing tabs");
+    }
+    if (!importedTabs.some((tab) => tab.id === DEFAULT_TAB_ID)) {
+      importedTabs.unshift({ id: DEFAULT_TAB_ID, name: "This Week" });
+    }
+
+    return {
+      tabs: importedTabs,
+      tasks: importedTasks,
+      groups: importedGroups,
+      activeTab: typeof data.activeTab === "string" ? data.activeTab : DEFAULT_TAB_ID,
+      theme: data.theme,
+    };
+  }
+
+  function restoreBackupData(data, sourceLabel) {
+    const imported = normalizeBackupData(data);
+    const summary = `${imported.tabs.length} tab${imported.tabs.length === 1 ? "" : "s"}, ${imported.groups.length} group${imported.groups.length === 1 ? "" : "s"}, and ${imported.tasks.length} action${imported.tasks.length === 1 ? "" : "s"}`;
+    if (!confirm(`Restore ${summary} from ${sourceLabel}? This will overwrite your current tasks, groups, and tabs and cannot be undone.`)) return false;
+
+    localStorage.setItem("nimbus.tabs", JSON.stringify(imported.tabs));
+    localStorage.setItem("nimbus.tasks", JSON.stringify(imported.tasks));
+    localStorage.setItem("nimbus.groups", JSON.stringify(imported.groups));
+    localStorage.setItem("nimbus.activeTab", imported.activeTab);
+    if (imported.theme) localStorage.setItem("nimbus.theme", imported.theme);
+    location.reload();
+    return true;
   }
 
   function importData(e) {
@@ -953,45 +1041,222 @@
     const reader = new FileReader();
     reader.onload = function (evt) {
       try {
-        const data = JSON.parse(evt.target.result);
-        if (!data || typeof data !== "object") throw new Error("Invalid format");
-
-        const importedTabs = Array.isArray(data.tabs)
-          ? data.tabs.filter((tab) => tab && typeof tab.id === "string" && typeof tab.name === "string")
-          : [];
-        const importedTasks = Array.isArray(data.tasks)
-          ? data.tasks.filter((task) => task && typeof task.id === "string" && typeof task.text === "string")
-          : [];
-        const importedGroups = Array.isArray(data.groups)
-          ? data.groups.filter((group) => group && typeof group.id === "string" && typeof group.name === "string")
-          : [];
-
-        // Older backups (pre-multi-tab) never captured a tab list. Restoring their tasks/groups
-        // would otherwise leave the current tab list untouched while wiping every tab's content,
-        // so refuse anything that doesn't describe a full tab set instead of silently doing that.
-        if (!importedTabs.length) {
-          alert("Failed to import: this backup doesn't include any tabs (it may be from an older version of Nimbus). Please use a backup made with a newer version.");
-          return;
-        }
-        if (!importedTabs.some((tab) => tab.id === DEFAULT_TAB_ID)) {
-          importedTabs.unshift({ id: DEFAULT_TAB_ID, name: "This Week" });
-        }
-
-        const summary = `${importedTabs.length} tab${importedTabs.length === 1 ? "" : "s"}, ${importedGroups.length} group${importedGroups.length === 1 ? "" : "s"}, and ${importedTasks.length} action${importedTasks.length === 1 ? "" : "s"}`;
-        if (confirm(`Restore ${summary} from this backup? This will overwrite your current tasks, groups, and tabs and cannot be undone.`)) {
-          localStorage.setItem("nimbus.tabs", JSON.stringify(importedTabs));
-          localStorage.setItem("nimbus.tasks", JSON.stringify(importedTasks));
-          localStorage.setItem("nimbus.groups", JSON.stringify(importedGroups));
-          if (typeof data.activeTab === "string") localStorage.setItem("nimbus.activeTab", data.activeTab);
-          if (data.theme) localStorage.setItem("nimbus.theme", data.theme);
-          location.reload();
-        }
+        restoreBackupData(JSON.parse(evt.target.result), "this backup");
       } catch (err) {
-        alert("Failed to import: file is not a valid Nimbus backup.");
+        alert(err.message === "Missing tabs" ? "Failed to import: this backup doesn't include any tabs (it may be from an older version of Nimbus). Please use a backup made with a newer version." : "Failed to import: file is not a valid Nimbus backup.");
       }
     };
     reader.readAsText(file);
     e.target.value = "";
+  }
+
+  function setCloudDataStatus(message, state) {
+    if (!cloudDataStatus) return;
+    cloudDataStatus.textContent = message;
+    cloudDataStatus.dataset.state = state || "info";
+  }
+
+  function normalizeCloudPhrase(value) {
+    return value.trim().toLowerCase().replace(/\s+/g, " ");
+  }
+
+  function getCloudPhrase() {
+    return cloudPhraseInput ? normalizeCloudPhrase(cloudPhraseInput.value) : "";
+  }
+
+  function arrayBufferToBase64(buffer) {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    bytes.forEach((byte) => {
+      binary += String.fromCharCode(byte);
+    });
+    return btoa(binary);
+  }
+
+  function base64ToArrayBuffer(value) {
+    const binary = atob(value);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    return bytes.buffer;
+  }
+
+  async function sha256Hex(value) {
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+
+  async function deriveCloudKey(phrase, salt) {
+    const phraseKey = await crypto.subtle.importKey("raw", new TextEncoder().encode(phrase), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", hash: "SHA-256", salt, iterations: CLOUD_KDF_ITERATIONS },
+      phraseKey,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"],
+    );
+  }
+
+  function createRecoveryPhrase() {
+    const indexes = new Uint8Array(RECOVERY_PHRASE_WORD_COUNT);
+    crypto.getRandomValues(indexes);
+    return [...indexes].map((index) => RECOVERY_WORDS[index]).join(" ");
+  }
+
+  async function getCloudSyncKey(phrase) {
+    return sha256Hex(`nimbus-sync-location-v1:${phrase}`);
+  }
+
+  async function encryptCloudBackup(phrase) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveCloudKey(phrase, salt);
+    const plaintext = new TextEncoder().encode(JSON.stringify(createBackupData()));
+    const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plaintext);
+    return {
+      app: "Nimbus",
+      format: CLOUD_SYNC_FORMAT,
+      updatedAt: new Date().toISOString(),
+      kdf: {
+        name: "PBKDF2",
+        hash: "SHA-256",
+        iterations: CLOUD_KDF_ITERATIONS,
+        salt: arrayBufferToBase64(salt),
+      },
+      cipher: {
+        name: "AES-GCM",
+        iv: arrayBufferToBase64(iv),
+      },
+      payload: arrayBufferToBase64(encrypted),
+    };
+  }
+
+  async function decryptCloudBackup(phrase, envelope) {
+    if (!envelope || envelope.app !== "Nimbus" || envelope.format !== CLOUD_SYNC_FORMAT) {
+      throw new Error("Invalid envelope");
+    }
+    const salt = new Uint8Array(base64ToArrayBuffer(envelope.kdf && envelope.kdf.salt));
+    const iv = new Uint8Array(base64ToArrayBuffer(envelope.cipher && envelope.cipher.iv));
+    const encrypted = base64ToArrayBuffer(envelope.payload);
+    const key = await deriveCloudKey(phrase, salt);
+    const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, encrypted);
+    return JSON.parse(new TextDecoder().decode(decrypted));
+  }
+
+  function markCloudDataDirty() {
+    if (!cloudPhraseInput || !getCloudPhrase()) return;
+    cloudDataDirty = true;
+    setCloudDataStatus("Local changes are not saved to encrypted cloud sync yet.", "warn");
+  }
+
+  function updateCloudPhraseOutput(phrase) {
+    if (!cloudPhraseOutput) return;
+    cloudPhraseOutput.hidden = !phrase;
+    cloudPhraseOutput.textContent = phrase ? phrase : "";
+  }
+
+  async function loadCloudData() {
+    const phrase = getCloudPhrase();
+    if (!phrase) {
+      setCloudDataStatus("Enter your recovery phrase first.", "error");
+      return;
+    }
+    if (!crypto.subtle) {
+      setCloudDataStatus("This browser does not support Web Crypto encryption.", "error");
+      return;
+    }
+    setCloudDataStatus("Loading encrypted cloud backup...", "info");
+    try {
+      const syncKey = await getCloudSyncKey(phrase);
+      const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/sync/${syncKey}`, { cache: "no-store" });
+      if (response.status === 404) {
+        setCloudDataStatus("No cloud backup exists for this phrase yet. Save to cloud from the first device first.", "error");
+        return;
+      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await decryptCloudBackup(phrase, await response.json());
+      const restored = restoreBackupData(data, "encrypted cloud sync");
+      if (!restored) setCloudDataStatus("Cloud load cancelled.", "info");
+    } catch (error) {
+      setCloudDataStatus("Could not decrypt cloud backup. Check the phrase or try again later.", "error");
+    }
+  }
+
+  async function saveCloudData() {
+    const phrase = getCloudPhrase();
+    if (!phrase) {
+      setCloudDataStatus("Enter or create a recovery phrase first.", "error");
+      return;
+    }
+    if (!crypto.subtle) {
+      setCloudDataStatus("This browser does not support Web Crypto encryption.", "error");
+      return;
+    }
+    setCloudDataStatus("Encrypting and saving cloud backup...", "info");
+    try {
+      const syncKey = await getCloudSyncKey(phrase);
+      const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/sync/${syncKey}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(await encryptCloudBackup(phrase)),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      cloudDataDirty = false;
+      setCloudDataStatus("Saved to cloud. Use the same recovery phrase to restore on another device.", "success");
+    } catch (error) {
+      setCloudDataStatus("Could not save encrypted cloud backup. Your local Nimbus data is still safe here.", "error");
+    }
+  }
+
+  async function downloadEncryptedBackup() {
+    const phrase = getCloudPhrase();
+    if (!phrase) {
+      setCloudDataStatus("Enter or create a recovery phrase first.", "error");
+      return;
+    }
+    if (!crypto.subtle) {
+      setCloudDataStatus("This browser does not support Web Crypto encryption.", "error");
+      return;
+    }
+    setCloudDataStatus("Encrypting backup file...", "info");
+    try {
+      const dateStr = new Date().toISOString().slice(0, 10);
+      downloadBackup(await encryptCloudBackup(phrase), `nimbus-encrypted-backup-${dateStr}.json`);
+      setCloudDataStatus("Encrypted backup downloaded. Keep it with your recovery phrase.", "success");
+    } catch (error) {
+      setCloudDataStatus("Could not create encrypted backup file.", "error");
+    }
+  }
+
+  function importEncryptedBackup(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const phrase = getCloudPhrase();
+    if (!phrase) {
+      setCloudDataStatus("Enter the recovery phrase before importing an encrypted backup.", "error");
+      event.target.value = "";
+      return;
+    }
+    if (!crypto.subtle) {
+      setCloudDataStatus("This browser does not support Web Crypto encryption.", "error");
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function (evt) {
+      setCloudDataStatus("Decrypting encrypted backup file...", "info");
+      try {
+        const data = await decryptCloudBackup(phrase, JSON.parse(evt.target.result));
+        const restored = restoreBackupData(data, "encrypted backup file");
+        if (!restored) setCloudDataStatus("Encrypted backup import cancelled.", "info");
+      } catch (error) {
+        setCloudDataStatus("Could not decrypt that file. Check the phrase and backup file.", "error");
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = "";
   }
 
   function clearData() {
@@ -1102,6 +1367,38 @@
   if (importDataBtn && importFileInput) {
     importDataBtn.addEventListener("click", () => importFileInput.click());
     importFileInput.addEventListener("change", importData);
+  }
+  if (generateCloudPhraseBtn) {
+    generateCloudPhraseBtn.addEventListener("click", () => {
+      const phrase = createRecoveryPhrase();
+      if (cloudPhraseInput) cloudPhraseInput.value = phrase;
+      updateCloudPhraseOutput(phrase);
+      setCloudDataStatus("Recovery phrase created. Save these words now. Nimbus cannot recover them.", "warn");
+    });
+  }
+  if (toggleCloudPhraseBtn && cloudPhraseInput) {
+    toggleCloudPhraseBtn.addEventListener("click", () => {
+      const shouldShow = cloudPhraseInput.type === "password";
+      cloudPhraseInput.type = shouldShow ? "text" : "password";
+      toggleCloudPhraseBtn.textContent = shouldShow ? "Hide" : "Show";
+      toggleCloudPhraseBtn.setAttribute("aria-pressed", shouldShow ? "true" : "false");
+    });
+  }
+  if (cloudPhraseInput) {
+    cloudPhraseInput.addEventListener("input", () => {
+      updateCloudPhraseOutput("");
+      if (cloudDataDirty) setCloudDataStatus("Local changes are not saved to encrypted cloud sync yet.", "warn");
+    });
+    cloudPhraseInput.addEventListener("change", () => {
+      cloudPhraseInput.value = getCloudPhrase();
+    });
+  }
+  if (cloudLoadDataBtn) cloudLoadDataBtn.addEventListener("click", loadCloudData);
+  if (cloudSaveDataBtn) cloudSaveDataBtn.addEventListener("click", saveCloudData);
+  if (downloadEncryptedDataBtn) downloadEncryptedDataBtn.addEventListener("click", downloadEncryptedBackup);
+  if (importEncryptedDataBtn && importEncryptedFileInput) {
+    importEncryptedDataBtn.addEventListener("click", () => importEncryptedFileInput.click());
+    importEncryptedFileInput.addEventListener("change", importEncryptedBackup);
   }
   if (randomizeDataBtn) randomizeDataBtn.addEventListener("click", randomizeDemoData);
   if (clearDataBtn) clearDataBtn.addEventListener("click", clearData);

@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nimbus</title>
   <meta name="theme-color" content="#7ec0ee" />
-  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.02.61" />
-  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.02.61" />
-  <link rel="manifest" href="manifest.webmanifest?v=2026.09.02.61" />
-  <link rel="stylesheet" href="styles.css?v=2026.09.02.61" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.02.62" />
+  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.02.62" />
+  <link rel="manifest" href="manifest.webmanifest?v=2026.09.02.62" />
+  <link rel="stylesheet" href="styles.css?v=2026.09.02.62" />
   <script>
     // Set theme class before first paint to prevent flash
     try {
@@ -286,7 +286,7 @@
   <main class="app">
     <header class="app__header">
       <div class="brand">
-        <img class="brand__mark" src="icon.svg?v=2026.09.02.61" alt="Nimbus icon" width="56" height="56" />
+        <img class="brand__mark" src="icon.svg?v=2026.09.02.62" alt="Nimbus icon" width="56" height="56" />
         <div class="brand__text">
           <h1 class="app__title">Nimbus</h1>
           <p class="app__subtitle">Chart your course, one day at a time.</p>
@@ -476,6 +476,37 @@
             <button type="button" class="btn btn--secondary" id="export-data-btn">Export data (JSON)</button>
             <button type="button" class="btn btn--secondary" id="import-data-btn">Import data (JSON)</button>
             <input type="file" id="import-file-input" accept="application/json" hidden />
+          </div>
+        </div>
+        <div class="settings-divider"></div>
+        <div class="settings-group">
+          <div class="settings-row settings-row--stacked">
+            <div>
+              <div class="settings-row__label">Encrypted Cloud Sync</div>
+              <div class="settings-row__desc">Create or enter a recovery phrase. Nimbus encrypts your backup before saving it online and cannot recover lost words.</div>
+            </div>
+            <div class="cloud-data-field">
+              <span class="cloud-data-field__label">Recovery phrase</span>
+              <span class="cloud-phrase-entry">
+                <input class="cloud-data-field__input" id="cloud-phrase" type="password" autocomplete="off" spellcheck="false" placeholder="sixteen recovery words" aria-label="Recovery phrase" />
+                <button type="button" class="cloud-phrase-entry__toggle" id="toggle-cloud-phrase-btn" aria-pressed="false">Show</button>
+              </span>
+            </div>
+            <p class="cloud-phrase-output" id="cloud-phrase-output" hidden></p>
+            <div class="settings-actions settings-actions--compact">
+              <button type="button" class="btn btn--secondary" id="generate-cloud-phrase-btn">Create phrase</button>
+              <button type="button" class="btn btn--secondary" id="cloud-load-data-btn">Restore from cloud</button>
+              <button type="button" class="btn btn--secondary" id="cloud-save-data-btn">Save to cloud</button>
+              <button type="button" class="btn btn--secondary" id="download-encrypted-data-btn">Download encrypted file</button>
+              <button type="button" class="btn btn--secondary" id="import-encrypted-data-btn">Import encrypted file</button>
+              <input type="file" id="import-encrypted-file-input" accept="application/json" hidden />
+            </div>
+            <p class="cloud-data-status" id="cloud-data-status" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="settings-divider"></div>
+        <div class="settings-group">
+          <div class="settings-actions">
             <a class="btn btn--secondary settings-link" href="tutorial.html">Tutorial</a>
             <button type="button" class="btn btn--secondary" id="randomize-data-btn">Randomize data (demo)</button>
             <button type="button" class="btn btn--secondary" id="about-btn">About</button>
@@ -495,12 +526,12 @@
       </div>
       <div class="about-content">
         <p class="about-content__name">Nimbus</p>
-        <p class="about-content__version">Version 2026.09.02.61</p>
+        <p class="about-content__version">Version 2026.09.02.62</p>
         <p class="about-content__description">A local-first weekly planner for charting your course, one day at a time.</p>
       </div>
     </div>
   </div>
 
-  <script src="app.js?v=2026.09.02.61"></script>
+  <script src="app.js?v=2026.09.02.62"></script>
 </body>
 </html>
