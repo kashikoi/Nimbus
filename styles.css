@@ -1262,6 +1262,33 @@ body {
   gap: 8px;
 }
 
+.about-content {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.about-content__name,
+.about-content__version,
+.about-content__description {
+  margin: 0;
+}
+
+.about-content__name {
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.about-content__version {
+  margin-top: 2px;
+  font-size: 0.88rem;
+}
+
+.about-content__description {
+  margin-top: 16px;
+  font-size: 0.92rem;
+}
+
 @media (max-width: 720px), (pointer: coarse) {
   body {
     padding: 20px 12px calc(32px + env(safe-area-inset-bottom));

@@ -8,6 +8,8 @@
   const timeEl = document.getElementById("app-time");
   const settingsBtn = document.getElementById("settings-btn");
   const settingsModal = document.getElementById("settings-modal");
+  const aboutBtn = document.getElementById("about-btn");
+  const aboutModal = document.getElementById("about-modal");
   const themeToggleBtn = document.getElementById("theme-toggle-btn");
   const exportDataBtn = document.getElementById("export-data-btn");
   const importDataBtn = document.getElementById("import-data-btn");
@@ -769,6 +771,14 @@
     if (settingsModal) settingsModal.hidden = true;
   }
 
+  function openAbout() {
+    if (aboutModal) aboutModal.hidden = false;
+  }
+
+  function closeAbout() {
+    if (aboutModal) aboutModal.hidden = true;
+  }
+
   // Data Export & Import
   function exportData() {
     const backup = {
@@ -909,6 +919,7 @@
 
   // Event Listeners
   if (settingsBtn) settingsBtn.addEventListener("click", openSettings);
+  if (aboutBtn) aboutBtn.addEventListener("click", openAbout);
   if (themePicker) {
     themePicker.addEventListener("click", (e) => {
       const chip = e.target.closest(".theme-chip");
@@ -1221,6 +1232,9 @@
     if (e.target.matches("[data-close-settings]")) {
       closeSettings();
     }
+    if (e.target.matches("[data-close-about]")) {
+      closeAbout();
+    }
     if (e.target.matches("[data-close-todo]")) {
       closeTodoModal();
     }
@@ -1241,6 +1255,9 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && settingsModal && !settingsModal.hidden) {
       closeSettings();
+    }
+    if (e.key === "Escape" && aboutModal && !aboutModal.hidden) {
+      closeAbout();
     }
     if (e.key === "Escape" && todoModal && !todoModal.hidden) {
       closeTodoModal();
