@@ -51,6 +51,8 @@
   let tabDropCommitted = false;
   let dragScrollSpeed = 0;
   let dragScrollFrame = null;
+  let tabDragScrollSpeed = 0;
+  let tabDragScrollFrame = null;
   let selectedTaskIds = new Set();
   let selectionAnchorId = null;
   let tabs = loadTabs();
@@ -763,6 +765,40 @@
     dragScrollFrame = null;
   }
 
+  function scrollTabBarWhileDragging() {
+    if (!tabDragScrollSpeed || !draggedTabId) {
+      tabDragScrollFrame = null;
+      return;
+    }
+    tabBar.scrollBy({ left: tabDragScrollSpeed, behavior: "instant" });
+    tabDragScrollFrame = requestAnimationFrame(scrollTabBarWhileDragging);
+  }
+
+  function updateTabDragScroll(clientX) {
+    const bounds = tabBar.getBoundingClientRect();
+    const edgeSize = 60;
+    const leftDistance = clientX - bounds.left;
+    const rightDistance = bounds.right - clientX;
+
+    if (leftDistance < edgeSize) {
+      tabDragScrollSpeed = -Math.ceil(((edgeSize - leftDistance) / edgeSize) * 14);
+    } else if (rightDistance < edgeSize) {
+      tabDragScrollSpeed = Math.ceil(((edgeSize - rightDistance) / edgeSize) * 14);
+    } else {
+      tabDragScrollSpeed = 0;
+    }
+
+    if (tabDragScrollSpeed && !tabDragScrollFrame) {
+      tabDragScrollFrame = requestAnimationFrame(scrollTabBarWhileDragging);
+    }
+  }
+
+  function stopTabDragScroll() {
+    tabDragScrollSpeed = 0;
+    if (tabDragScrollFrame) cancelAnimationFrame(tabDragScrollFrame);
+    tabDragScrollFrame = null;
+  }
+
   // Clock
   function updateClock() {
     const now = new Date();
@@ -1142,22 +1178,24 @@
     tabBar.addEventListener("dragend", (event) => {
       const chip = event.target.closest(".tab-bar__tab");
       if (chip) chip.classList.remove("tab-bar__tab--dragging");
+      stopTabDragScroll();
       if (!tabDropCommitted) renderTabs();
       draggedTabId = null;
     });
 
     tabBar.addEventListener("dragover", (event) => {
       if (!draggedTabId) return;
-      const target = event.target.closest(".tab-bar__tab");
-      if (!target) return;
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
-      reorderDraggingTab(target, event.clientX);
+      updateTabDragScroll(event.clientX);
+      const target = event.target.closest(".tab-bar__tab");
+      if (target) reorderDraggingTab(target, event.clientX);
     });
 
     tabBar.addEventListener("drop", (event) => {
       if (!draggedTabId) return;
       const target = event.target.closest(".tab-bar__tab");
+      stopTabDragScroll();
       if (!target) return;
       event.preventDefault();
       tabDropCommitted = true;
