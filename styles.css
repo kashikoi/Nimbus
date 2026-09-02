@@ -545,6 +545,12 @@ body {
   background: color-mix(in srgb, var(--card-strong) 65%, transparent);
 }
 
+.tab-bar__tab--task-drop-target {
+  background: color-mix(in srgb, var(--accent) 24%, var(--card-strong));
+  border-color: var(--accent);
+  color: var(--text);
+}
+
 .tab-bar__tab--active .tab-bar__name,
 .tab-bar__tab--active .tab-bar__delete {
   color: inherit;
@@ -552,7 +558,6 @@ body {
 
 .tab-bar__name {
   min-width: 42px;
-  max-width: 160px;
   padding: 2px 4px;
   border: 0;
   border-radius: 6px;

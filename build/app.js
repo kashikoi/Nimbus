@@ -346,6 +346,7 @@
       name.value = tab.name;
       name.placeholder = "New tab";
       name.readOnly = true;
+      name.size = Math.max(4, tab.name.length);
       name.dataset.tabName = tab.id;
       name.setAttribute("aria-label", "Tab name");
       chip.appendChild(name);
@@ -700,6 +701,20 @@
     renderTasks();
   }
 
+  function moveTasksToTab(tabId) {
+    if (!tabs.some((tab) => tab.id === tabId)) return;
+    draggedTaskIds.forEach((id) => {
+      const task = tasks.find((item) => item.id === id);
+      if (!task) return;
+      task.tabId = tabId;
+      task.day = null;
+    });
+    clearSelection();
+    saveTasks();
+    renderTabs();
+    renderTasks();
+  }
+
   function getVisibleTaskCards() {
     return [...app.querySelectorAll(".task-list .task-card")];
   }
@@ -769,7 +784,7 @@
   }
 
   function scrollTabBarWhileDragging() {
-    if (!tabDragScrollSpeed || !draggedTabId) {
+    if (!tabDragScrollSpeed || (!draggedTabId && !draggedTaskId)) {
       tabDragScrollFrame = null;
       return;
     }
@@ -1188,19 +1203,34 @@
     });
 
     tabBar.addEventListener("dragover", (event) => {
+      const target = event.target.closest(".tab-bar__tab");
+      if (draggedTaskId) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+        updateTabDragScroll(event.clientX);
+        tabBar.querySelectorAll(".tab-bar__tab").forEach((chip) => {
+          chip.classList.toggle("tab-bar__tab--task-drop-target", chip === target);
+        });
+        return;
+      }
       if (!draggedTabId) return;
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
       updateTabDragScroll(event.clientX);
-      const target = event.target.closest(".tab-bar__tab");
       if (target) reorderDraggingTab(target, event.clientX);
     });
 
     tabBar.addEventListener("drop", (event) => {
-      if (!draggedTabId) return;
       const target = event.target.closest(".tab-bar__tab");
-      stopTabDragScroll();
       if (!target) return;
+      if (draggedTaskId) {
+        event.preventDefault();
+        taskDropCommitted = true;
+        moveTasksToTab(target.dataset.tabId);
+        return;
+      }
+      if (!draggedTabId) return;
+      stopTabDragScroll();
       event.preventDefault();
       tabDropCommitted = true;
       saveTabOrder();
@@ -1375,7 +1405,11 @@
       draggedTaskIds.forEach((id) => {
         app.querySelector(`[data-task-id="${id}"]`)?.classList.remove("task-card--dragging");
       });
+      tabBar?.querySelectorAll(".tab-bar__tab--task-drop-target").forEach((chip) => {
+        chip.classList.remove("tab-bar__tab--task-drop-target");
+      });
       stopDragScroll();
+      stopTabDragScroll();
       if (!taskDropCommitted) renderTasks();
       draggedTaskId = null;
       draggedTaskIds = [];
