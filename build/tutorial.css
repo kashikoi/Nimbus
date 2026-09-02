@@ -1,0 +1,295 @@
+/* Tutorial page - follows the Cumulus tour flow while reusing Nimbus atmosphere. */
+
+.tutorial-body {
+  display: block;
+  padding: 40px 20px;
+}
+
+.tutorial {
+  margin: 0 auto;
+  max-width: 780px;
+}
+
+.tutorial-cloud {
+  position: absolute;
+  width: 520px;
+  height: 260px;
+  opacity: 0.72;
+  animation: tutorialCloudDrift 42s linear infinite;
+}
+
+.tutorial-cloud span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(18px);
+  background: radial-gradient(circle at 45% 35%, #ffffff 0%, #f5fbff 50%, #d8eefb 86%, transparent 100%);
+}
+
+.tutorial-cloud span:nth-child(1) { width: 260px; height: 150px; left: 40px; top: 70px; }
+.tutorial-cloud span:nth-child(2) { width: 240px; height: 180px; left: 170px; top: 38px; }
+.tutorial-cloud span:nth-child(3) { width: 210px; height: 130px; left: 300px; top: 92px; }
+.tutorial-cloud span:nth-child(4) { width: 320px; height: 110px; left: 95px; top: 136px; }
+
+.tutorial-cloud--1 { top: 12vh; left: -160px; }
+.tutorial-cloud--2 { top: 38vh; left: 46vw; animation-duration: 58s; animation-delay: -18s; transform: scale(0.82); }
+.tutorial-cloud--3 { top: 68vh; left: 12vw; animation-duration: 50s; animation-delay: -32s; transform: scale(1.08); }
+
+@keyframes tutorialCloudDrift {
+  from { translate: -18vw 0; }
+  to { translate: 118vw 0; }
+}
+
+.tut-back {
+  text-decoration: none;
+}
+
+.tut-hero,
+.tut-step,
+.tut-callout {
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--card) 58%, transparent);
+  box-shadow: 0 18px 40px rgba(42, 92, 140, 0.2);
+}
+
+.tut-hero {
+  padding: 32px;
+  margin-bottom: 28px;
+}
+
+.tut-hero__badge {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent-2);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tut-hero__title {
+  margin: 0 0 12px;
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+.tut-hero__text,
+.tut-step__body p,
+.tut-callout p,
+.tut-outro p,
+.tut-legend__item {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.tut-hero__text {
+  margin: 0;
+  font-size: 16px;
+}
+
+.tut-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.tut-nav a {
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card-strong) 62%, transparent);
+  color: var(--accent-2);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.14s ease, transform 0.14s ease;
+}
+
+.tut-nav a:hover {
+  background: color-mix(in srgb, var(--accent) 16%, var(--card-strong));
+  transform: translateY(-1px);
+}
+
+.tut-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+}
+
+.tut-step {
+  display: flex;
+  gap: 18px;
+  padding: 22px 24px;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.tut-step:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 46px rgba(42, 92, 140, 0.28);
+}
+
+.tut-step__num {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--accent-2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--accent-2) 35%, transparent);
+}
+
+.tut-step__body {
+  min-width: 0;
+}
+
+.tut-step__body h3,
+.tut-callout h3,
+.tut-outro h2 {
+  color: var(--text);
+}
+
+.tut-step__body h3 {
+  margin: 4px 0 8px;
+  font-size: 19px;
+}
+
+.tut-step__body p {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.tut-step__body p:last-child {
+  margin-bottom: 0;
+}
+
+.tut-note {
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  font-size: 14px !important;
+}
+
+.tut-mini-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tut-mini-action,
+.tut-week-row {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--card-strong) 72%, transparent);
+}
+
+.tut-mini-action {
+  padding: 12px 14px;
+  text-align: center;
+  color: var(--text);
+  font-family: "Trebuchet MS", Verdana, sans-serif;
+  font-weight: 650;
+}
+
+.tut-week-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-top: 8px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.tut-week-row strong {
+  color: var(--muted);
+}
+
+.tut-week-row--today {
+  border-color: color-mix(in srgb, var(--accent) 72%, var(--line));
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.tut-callout {
+  padding: 22px 24px;
+  margin-bottom: 28px;
+  border-style: dashed;
+}
+
+.tut-callout h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.tut-callout p {
+  margin: 0;
+  font-size: 15px;
+}
+
+.tut-outro {
+  text-align: center;
+  padding: 20px 0 10px;
+}
+
+.tut-outro h2 {
+  margin: 0 0 8px;
+  font-size: 26px;
+  letter-spacing: 0;
+}
+
+.tut-outro p {
+  margin: 0 0 18px;
+  font-size: 15px;
+}
+
+.tut-outro__btn {
+  text-decoration: none;
+}
+
+html.twilight .tut-hero,
+html.twilight .tut-step,
+html.twilight .tut-callout,
+html.night .tut-hero,
+html.dark .tut-hero,
+html.night .tut-step,
+html.dark .tut-step,
+html.night .tut-callout,
+html.dark .tut-callout {
+  border-color: var(--line);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+}
+
+@media (max-width: 620px) {
+  .tutorial-body {
+    padding: 28px 14px;
+  }
+
+  .tut-hero,
+  .tut-step,
+  .tut-callout {
+    padding: 20px;
+  }
+
+  .tut-step {
+    gap: 12px;
+  }
+
+  .tut-hero__title {
+    font-size: 27px;
+  }
+}

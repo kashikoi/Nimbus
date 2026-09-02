@@ -1,0 +1,16 @@
+{
+  "name": "Nimbus",
+  "short_name": "Nimbus",
+  "description": "A personal to-do and agenda local-first web app.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#7ec0ee",
+  "theme_color": "#7ec0ee",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
