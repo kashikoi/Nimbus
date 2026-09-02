@@ -15,8 +15,15 @@
   const randomizeDataBtn = document.getElementById("randomize-data-btn");
   const clearDataBtn = document.getElementById("clear-data-btn");
   const app = document.querySelector(".app");
+  const tabBar = document.getElementById("tab-bar");
+  const appCanvas = document.getElementById("app-canvas");
+  const tabDeleteModal = document.getElementById("tab-delete-modal");
+  const tabDeleteMessage = document.getElementById("tab-delete-message");
+  const deleteTabBtn = document.getElementById("delete-tab-btn");
   const addTodoBtn = document.getElementById("add-todo-btn");
   const addGroupBtn = document.getElementById("add-group-btn");
+  const collapseAllBtn = document.getElementById("collapse-all-btn");
+  const expandAllBtn = document.getElementById("expand-all-btn");
   const customGroups = document.getElementById("custom-groups");
   const todoModal = document.getElementById("todo-modal");
   const todoForm = document.getElementById("todo-form");
@@ -31,17 +38,24 @@
   const moveActionModal = document.getElementById("move-action-modal");
   const moveActionList = document.getElementById("move-action-list");
   const WEEKDAYS = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
+  const DEFAULT_TAB_ID = "tab-default";
   const isMobile = window.matchMedia("(pointer: coarse), (max-width: 720px)");
   let draggedTaskId = null;
+  let draggedTaskIds = [];
   let taskDropCommitted = false;
   let draggedGroupId = null;
   let groupDropCommitted = false;
   let dragScrollSpeed = 0;
   let dragScrollFrame = null;
+  let selectedTaskIds = new Set();
+  let selectionAnchorId = null;
+  let tabs = loadTabs();
+  let activeTabId = loadActiveTabId();
   let tasks = loadTasks();
   let groups = loadGroups();
   let groupPendingDeletion = null;
   let actionPendingMove = null;
+  let tabPendingDeletion = null;
 
   function updateMobileMode() {
     document.documentElement.classList.toggle("mobile", isMobile.matches);
@@ -60,10 +74,42 @@
   function loadTasks() {
     try {
       const savedTasks = JSON.parse(localStorage.getItem("nimbus.tasks") || "[]");
-      return Array.isArray(savedTasks) ? savedTasks.filter((task) => task && typeof task.id === "string" && typeof task.text === "string") : [];
+      return Array.isArray(savedTasks)
+        ? savedTasks
+            .filter((task) => task && typeof task.id === "string" && typeof task.text === "string")
+            .map((task) => ({ ...task, tabId: typeof task.tabId === "string" ? task.tabId : DEFAULT_TAB_ID }))
+        : [];
     } catch (error) {
       return [];
     }
+  }
+
+  function loadTabs() {
+    try {
+      const savedTabs = JSON.parse(localStorage.getItem("nimbus.tabs") || "null");
+      if (Array.isArray(savedTabs) && savedTabs.length) {
+        const cleaned = savedTabs.filter((tab) => tab && typeof tab.id === "string" && typeof tab.name === "string");
+        if (!cleaned.some((tab) => tab.id === DEFAULT_TAB_ID)) {
+          cleaned.unshift({ id: DEFAULT_TAB_ID, name: "This Week" });
+        }
+        if (cleaned.length) return cleaned;
+      }
+    } catch (error) {
+      // fall through to default
+    }
+    return [{ id: DEFAULT_TAB_ID, name: "This Week" }];
+  }
+
+  function saveTabs() {
+    localStorage.setItem("nimbus.tabs", JSON.stringify(tabs));
+  }
+
+  function loadActiveTabId() {
+    return localStorage.getItem("nimbus.activeTab") || DEFAULT_TAB_ID;
+  }
+
+  function saveActiveTabId() {
+    localStorage.setItem("nimbus.activeTab", activeTabId);
   }
 
   function saveTasks() {
@@ -78,7 +124,15 @@
   function loadGroups() {
     try {
       const savedGroups = JSON.parse(localStorage.getItem("nimbus.groups") || "[]");
-      return Array.isArray(savedGroups) ? savedGroups.filter((group) => group && typeof group.id === "string" && typeof group.name === "string") : [];
+      return Array.isArray(savedGroups)
+        ? savedGroups
+            .filter((group) => group && typeof group.id === "string" && typeof group.name === "string")
+            .map((group) => ({
+              ...group,
+              collapsed: Boolean(group.collapsed),
+              tabId: typeof group.tabId === "string" ? group.tabId : DEFAULT_TAB_ID,
+            }))
+        : [];
     } catch (error) {
       return [];
     }
@@ -88,37 +142,83 @@
     localStorage.setItem("nimbus.groups", JSON.stringify(groups));
   }
 
+  function syncCustomGroupListState(list, collapsed) {
+    if (!list) return;
+    list.classList.toggle("task-list--collapsed", collapsed);
+    list.setAttribute("aria-hidden", String(collapsed));
+    list.style.maxHeight = collapsed ? "0px" : `${list.scrollHeight}px`;
+    list.style.opacity = collapsed ? "0" : "1";
+    list.style.transform = collapsed ? "translateY(-8px)" : "translateY(0)";
+    list.style.pointerEvents = collapsed ? "none" : "auto";
+  }
+
+  function syncCustomGroupListStates() {
+    customGroups?.querySelectorAll(".custom-group .task-list").forEach((list) => {
+      const group = groups.find((item) => item.id === list.dataset.list);
+      syncCustomGroupListState(list, Boolean(group && group.collapsed));
+    });
+  }
+
+  function setAllGroupsCollapsed(collapsed) {
+    groups = groups.map((group) => (group.tabId === activeTabId ? { ...group, collapsed } : group));
+    saveGroups();
+    renderGroups();
+    renderTasks();
+  }
+
+  function toggleGroupCollapse(groupId) {
+    const group = groups.find((item) => item.id === groupId);
+    if (!group) return;
+    group.collapsed = !Boolean(group.collapsed);
+    saveGroups();
+    renderGroups();
+    renderTasks();
+  }
+
   function renderGroups() {
     if (!customGroups) return;
     customGroups.replaceChildren();
-    groups.forEach((group) => {
+    groups.filter((group) => group.tabId === activeTabId).forEach((group) => {
       const section = document.createElement("section");
-      section.className = "custom-group";
+      section.className = `custom-group${group.collapsed ? " custom-group--collapsed" : ""}`;
       section.dataset.groupId = group.id;
 
       const heading = document.createElement("div");
       heading.className = "custom-group__heading";
       heading.draggable = true;
       heading.title = "Drag to reorder group";
+
+      const collapseButton = document.createElement("button");
+      collapseButton.className = "custom-group__toggle";
+      collapseButton.type = "button";
+      collapseButton.textContent = group.collapsed ? "▸" : "▾";
+      collapseButton.title = group.collapsed ? "Expand group" : "Collapse group";
+      collapseButton.setAttribute("aria-label", `${group.collapsed ? "Expand" : "Collapse"} ${group.name || "group"}`);
+      collapseButton.setAttribute("aria-expanded", String(!group.collapsed));
+
       const title = document.createElement("input");
       title.className = "day-group__title custom-group__name";
       title.type = "text";
       title.value = group.name;
       title.placeholder = "New group";
+      title.readOnly = true;
       title.dataset.groupName = group.id;
       title.setAttribute("aria-label", "Group name");
+
       const deleteButton = document.createElement("button");
       deleteButton.className = "custom-group__delete";
       deleteButton.type = "button";
       deleteButton.textContent = "🗑";
       deleteButton.title = "Delete group";
       deleteButton.setAttribute("aria-label", `Delete ${group.name || "group"}`);
-      heading.append(title, deleteButton);
+
+      heading.append(collapseButton, title, deleteButton);
 
       const list = document.createElement("div");
       list.className = "task-list";
       list.dataset.list = group.id;
       list.setAttribute("aria-label", `${group.name || "New group"} to-dos`);
+      syncCustomGroupListState(list, Boolean(group.collapsed));
       section.append(heading, list);
       customGroups.appendChild(section);
     });
@@ -126,12 +226,18 @@
 
   function renderTasks() {
     if (!app) return;
+    if (selectedTaskIds.size) {
+      const existingIds = new Set(tasks.map((task) => task.id));
+      [...selectedTaskIds].forEach((id) => {
+        if (!existingIds.has(id)) selectedTaskIds.delete(id);
+      });
+    }
     app.querySelectorAll(".task-list").forEach((list) => {
       list.replaceChildren();
       const location = list.dataset.list;
-      tasks.filter((task) => (task.day || "unassigned") === location).forEach((task) => {
+      tasks.filter((task) => (task.day || "unassigned") === location && task.tabId === activeTabId).forEach((task) => {
         const card = document.createElement("article");
-        card.className = `task-card${task.done ? " task-card--done" : ""}`;
+        card.className = `task-card${task.done ? " task-card--done" : ""}${selectedTaskIds.has(task.id) ? " task-card--selected" : ""}`;
         card.draggable = true;
         card.dataset.taskId = task.id;
 
@@ -146,6 +252,7 @@
         text.value = task.text;
         text.placeholder = "New action";
         text.rows = 1;
+        text.readOnly = true;
         text.dataset.taskText = task.id;
         text.setAttribute("aria-label", "Action text");
 
@@ -166,7 +273,12 @@
         list.appendChild(card);
         fitActionHeight(text);
       });
+      const group = groups.find((item) => item.id === location);
+      if (group) {
+        syncCustomGroupListState(list, Boolean(group.collapsed));
+      }
     });
+    syncCustomGroupListStates();
   }
 
   function openTodoModal() {
@@ -182,16 +294,122 @@
   function focusEditable(selector) {
     const editable = document.querySelector(selector);
     if (!editable) return;
-    editable.focus();
-    editable.select();
+    enterEditMode(editable);
+  }
+
+  function enterEditMode(field) {
+    if (!field) return;
+    field.readOnly = false;
+    field.focus();
+    field.select();
   }
 
   function addBlankTask() {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    tasks.push({ id, text: "", done: false, day: null });
+    tasks.push({ id, text: "", done: false, day: null, tabId: activeTabId });
     saveTasks();
     renderTasks();
     focusEditable(`[data-task-text="${id}"]`);
+  }
+
+  function updateCanvasVisibility() {
+    if (appCanvas) appCanvas.hidden = activeTabId !== DEFAULT_TAB_ID;
+  }
+
+  function renderTabs() {
+    if (!tabBar) return;
+    tabBar.replaceChildren();
+    tabs.forEach((tab) => {
+      const chip = document.createElement("div");
+      chip.className = `tab-bar__tab${tab.id === activeTabId ? " tab-bar__tab--active" : ""}`;
+      chip.dataset.tabId = tab.id;
+
+      const name = document.createElement("input");
+      name.className = "tab-bar__name";
+      name.type = "text";
+      name.value = tab.name;
+      name.placeholder = "New tab";
+      name.readOnly = true;
+      name.dataset.tabName = tab.id;
+      name.setAttribute("aria-label", "Tab name");
+      chip.appendChild(name);
+
+      if (tab.id !== DEFAULT_TAB_ID) {
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "tab-bar__delete";
+        deleteButton.type = "button";
+        deleteButton.textContent = "×";
+        deleteButton.title = "Delete tab";
+        deleteButton.setAttribute("aria-label", `Delete ${tab.name || "tab"}`);
+        deleteButton.dataset.tabDelete = tab.id;
+        chip.appendChild(deleteButton);
+      }
+
+      tabBar.appendChild(chip);
+    });
+
+    const addButton = document.createElement("button");
+    addButton.className = "tab-bar__add";
+    addButton.type = "button";
+    addButton.id = "add-tab-btn";
+    addButton.textContent = "+";
+    addButton.title = "Add tab";
+    addButton.setAttribute("aria-label", "Add tab");
+    tabBar.appendChild(addButton);
+  }
+
+  function setActiveTab(tabId) {
+    if (tabId === activeTabId || !tabs.some((tab) => tab.id === tabId)) return;
+    activeTabId = tabId;
+    clearSelection();
+    saveActiveTabId();
+    renderTabs();
+    updateCanvasVisibility();
+    renderGroups();
+    renderTasks();
+  }
+
+  function addBlankTab() {
+    const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    tabs.push({ id, name: "" });
+    activeTabId = id;
+    saveTabs();
+    saveActiveTabId();
+    renderTabs();
+    updateCanvasVisibility();
+    renderGroups();
+    renderTasks();
+    focusEditable(`[data-tab-name="${id}"]`);
+  }
+
+  function openTabDeleteModal(tabId) {
+    const tab = tabs.find((item) => item.id === tabId);
+    if (!tab || tabId === DEFAULT_TAB_ID) return;
+    tabPendingDeletion = tabId;
+    tabDeleteMessage.textContent = `Delete "${tab.name || "this tab"}" and all of its groups and to-dos? This cannot be undone.`;
+    tabDeleteModal.hidden = false;
+  }
+
+  function closeTabDeleteModal() {
+    tabDeleteModal.hidden = true;
+    tabPendingDeletion = null;
+  }
+
+  function deleteTab() {
+    if (!tabPendingDeletion || tabPendingDeletion === DEFAULT_TAB_ID) return;
+    tasks = tasks.filter((task) => task.tabId !== tabPendingDeletion);
+    groups = groups.filter((group) => group.tabId !== tabPendingDeletion);
+    tabs = tabs.filter((tab) => tab.id !== tabPendingDeletion);
+    if (activeTabId === tabPendingDeletion) activeTabId = DEFAULT_TAB_ID;
+    saveTasks();
+    saveGroups();
+    saveTabs();
+    saveActiveTabId();
+    closeTabDeleteModal();
+    renderTabs();
+    updateCanvasVisibility();
+    renderGroups();
+    renderTasks();
   }
 
   function openGroupModal() {
@@ -206,7 +424,7 @@
 
   function addBlankGroup() {
     const id = `group-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    groups.push({ id, name: "" });
+    groups.push({ id, tabId: activeTabId, name: "" });
     saveGroups();
     renderGroups();
     renderTasks();
@@ -233,8 +451,8 @@
     const currentLocation = task.day || "unassigned";
     const destinations = [
       { id: "unassigned", label: "To-Dos" },
-      ...WEEKDAYS.map((day) => ({ id: day, label: day[0].toUpperCase() + day.slice(1) })),
-      ...groups.map((group) => ({ id: group.id, label: group.name || "New group" })),
+      ...(task.tabId === DEFAULT_TAB_ID ? WEEKDAYS.map((day) => ({ id: day, label: day[0].toUpperCase() + day.slice(1) })) : []),
+      ...groups.filter((group) => group.tabId === task.tabId).map((group) => ({ id: group.id, label: group.name || "New group" })),
     ];
     moveActionList.replaceChildren();
     destinations.forEach((destination) => {
@@ -282,9 +500,24 @@
   }
 
   function saveTaskOrder(location) {
-    const draggedTask = tasks.find((task) => task.id === draggedTaskId);
-    if (!draggedTask) return;
-    draggedTask.day = location === "unassigned" ? null : location;
+    // Cards beyond the primary dragged one still sit at their original spot; bring them
+    // along right next to it so the whole selection lands together at the drop point.
+    const primaryCard = app.querySelector(`[data-task-id="${draggedTaskId}"]`);
+    if (!primaryCard) return;
+    let anchor = primaryCard;
+    draggedTaskIds
+      .filter((id) => id !== draggedTaskId)
+      .forEach((id) => {
+        const card = app.querySelector(`[data-task-id="${id}"]`);
+        if (!card) return;
+        anchor.after(card);
+        anchor = card;
+      });
+
+    draggedTaskIds.forEach((id) => {
+      const task = tasks.find((item) => item.id === id);
+      if (task) task.day = location === "unassigned" ? null : location;
+    });
 
     const taskOrder = [...app.querySelectorAll(".task-list .task-card")].map((card) => card.dataset.taskId);
     tasks = taskOrder.map((taskId) => tasks.find((task) => task.id === taskId)).filter(Boolean);
@@ -348,7 +581,9 @@
 
   function saveGroupOrder() {
     const groupOrder = [...customGroups.querySelectorAll(".custom-group")].map((group) => group.dataset.groupId);
-    groups = groupOrder.map((groupId) => groups.find((group) => group.id === groupId)).filter(Boolean);
+    const reordered = groupOrder.map((groupId) => groups.find((group) => group.id === groupId)).filter(Boolean);
+    const otherTabGroups = groups.filter((group) => group.tabId !== activeTabId);
+    groups = [...otherTabGroups, ...reordered];
     saveGroups();
   }
 
@@ -372,6 +607,41 @@
   function moveTask(location) {
     saveTaskOrder(location);
     renderTasks();
+  }
+
+  function getVisibleTaskCards() {
+    return [...app.querySelectorAll(".task-list .task-card")];
+  }
+
+  function clearSelection() {
+    if (!selectedTaskIds.size) return;
+    selectedTaskIds.clear();
+    selectionAnchorId = null;
+    app.querySelectorAll(".task-card--selected").forEach((card) => card.classList.remove("task-card--selected"));
+  }
+
+  function toggleTaskSelection(taskId) {
+    if (selectedTaskIds.has(taskId)) {
+      selectedTaskIds.delete(taskId);
+    } else {
+      selectedTaskIds.add(taskId);
+    }
+    selectionAnchorId = taskId;
+    app.querySelector(`[data-task-id="${taskId}"]`)?.classList.toggle("task-card--selected", selectedTaskIds.has(taskId));
+  }
+
+  function selectTaskRange(taskId) {
+    const cards = getVisibleTaskCards();
+    const ids = cards.map((card) => card.dataset.taskId);
+    const anchorIndex = ids.indexOf(selectionAnchorId);
+    const targetIndex = ids.indexOf(taskId);
+    if (anchorIndex === -1 || targetIndex === -1) {
+      toggleTaskSelection(taskId);
+      return;
+    }
+    const [start, end] = anchorIndex < targetIndex ? [anchorIndex, targetIndex] : [targetIndex, anchorIndex];
+    selectedTaskIds = new Set(ids.slice(start, end + 1));
+    cards.forEach((card) => card.classList.toggle("task-card--selected", selectedTaskIds.has(card.dataset.taskId)));
   }
 
   function scrollWhileDragging() {
@@ -508,6 +778,8 @@
       tasks: JSON.parse(localStorage.getItem("nimbus.tasks") || "[]"),
       lists: JSON.parse(localStorage.getItem("nimbus.lists") || "[]"),
       groups: JSON.parse(localStorage.getItem("nimbus.groups") || "[]"),
+      tabs: JSON.parse(localStorage.getItem("nimbus.tabs") || "[]"),
+      activeTab: localStorage.getItem("nimbus.activeTab") || DEFAULT_TAB_ID,
     };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -533,6 +805,8 @@
           if (Array.isArray(data.tasks)) localStorage.setItem("nimbus.tasks", JSON.stringify(data.tasks));
           if (Array.isArray(data.lists)) localStorage.setItem("nimbus.lists", JSON.stringify(data.lists));
           if (Array.isArray(data.groups)) localStorage.setItem("nimbus.groups", JSON.stringify(data.groups));
+          if (Array.isArray(data.tabs)) localStorage.setItem("nimbus.tabs", JSON.stringify(data.tabs));
+          if (typeof data.activeTab === "string") localStorage.setItem("nimbus.activeTab", data.activeTab);
           if (data.theme) localStorage.setItem("nimbus.theme", data.theme);
           location.reload();
         }
@@ -549,6 +823,8 @@
       localStorage.removeItem("nimbus.tasks");
       localStorage.removeItem("nimbus.lists");
       localStorage.removeItem("nimbus.groups");
+      localStorage.removeItem("nimbus.tabs");
+      localStorage.removeItem("nimbus.activeTab");
       location.reload();
     }
   }
@@ -576,15 +852,22 @@
       ["Close out the week", "friday", false],
     ];
 
-    groups = [{ id: "demo-home", name: "Home projects" }];
+    groups = [{ id: "demo-home", tabId: DEFAULT_TAB_ID, name: "Home projects" }];
     tasks = demoItems.map(([text, day, done], index) => ({
       id: `demo-${Date.now()}-${index}`,
       text,
       day,
       done,
+      tabId: DEFAULT_TAB_ID,
     }));
+    tabs = [{ id: DEFAULT_TAB_ID, name: "This Week" }];
+    activeTabId = DEFAULT_TAB_ID;
     saveTasks();
     saveGroups();
+    saveTabs();
+    saveActiveTabId();
+    renderTabs();
+    updateCanvasVisibility();
     renderGroups();
     renderTasks();
     closeSettings();
@@ -612,12 +895,14 @@
   if (clearDataBtn) clearDataBtn.addEventListener("click", clearData);
   if (addTodoBtn) addTodoBtn.addEventListener("click", addBlankTask);
   if (addGroupBtn) addGroupBtn.addEventListener("click", addBlankGroup);
+  if (collapseAllBtn) collapseAllBtn.addEventListener("click", () => setAllGroupsCollapsed(true));
+  if (expandAllBtn) expandAllBtn.addEventListener("click", () => setAllGroupsCollapsed(false));
   if (todoForm) {
     todoForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const text = todoInput.value.trim();
       if (!text) return;
-      tasks.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, text, done: false, day: null });
+      tasks.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, text, done: false, day: null, tabId: activeTabId });
       saveTasks();
       renderTasks();
       closeTodoModal();
@@ -628,7 +913,7 @@
       event.preventDefault();
       const name = groupInput.value.trim();
       if (!name) return;
-      groups.push({ id: `group-${Date.now()}-${Math.random().toString(36).slice(2)}`, name });
+      groups.push({ id: `group-${Date.now()}-${Math.random().toString(36).slice(2)}`, tabId: activeTabId, name });
       saveGroups();
       renderGroups();
       renderTasks();
@@ -637,10 +922,54 @@
   }
   if (moveGroupTasksBtn) moveGroupTasksBtn.addEventListener("click", () => deleteGroup(true));
   if (deleteGroupTasksBtn) deleteGroupTasksBtn.addEventListener("click", () => deleteGroup(false));
+  if (deleteTabBtn) deleteTabBtn.addEventListener("click", deleteTab);
   if (moveActionList) {
     moveActionList.addEventListener("click", (event) => {
       const option = event.target.closest("[data-move-to]");
       if (option) moveActionTo(option.dataset.moveTo);
+    });
+  }
+
+  if (tabBar) {
+    tabBar.addEventListener("click", (event) => {
+      if (event.target.closest("#add-tab-btn")) {
+        addBlankTab();
+        return;
+      }
+      const deleteButton = event.target.closest("[data-tab-delete]");
+      if (deleteButton) {
+        openTabDeleteModal(deleteButton.dataset.tabDelete);
+        return;
+      }
+      const chip = event.target.closest(".tab-bar__tab");
+      if (chip && !event.target.closest("input, button")) {
+        setActiveTab(chip.dataset.tabId);
+      }
+    });
+
+    tabBar.addEventListener("focusout", (event) => {
+      const tabName = event.target.closest("[data-tab-name]");
+      if (!tabName) return;
+      const tab = tabs.find((item) => item.id === tabName.dataset.tabName);
+      if (tab) {
+        tab.name = tabName.value.trim();
+        saveTabs();
+        renderTabs();
+      }
+    });
+
+    tabBar.addEventListener("keydown", (event) => {
+      const tabName = event.target.closest("[data-tab-name]");
+      if (tabName && event.key === "Enter") {
+        event.preventDefault();
+        tabName.blur();
+      }
+    });
+
+    tabBar.addEventListener("dblclick", (event) => {
+      if (event.target.closest("button")) return;
+      const chip = event.target.closest(".tab-bar__tab");
+      if (chip) enterEditMode(chip.querySelector("[data-tab-name]"));
     });
   }
 
@@ -658,6 +987,7 @@
           task.text = taskText.value.trim();
           saveTasks();
         }
+        taskText.readOnly = true;
         return;
       }
 
@@ -673,6 +1003,21 @@
       }
     });
 
+    app.addEventListener("dblclick", (event) => {
+      if (event.target.closest("button, .task-card__check")) return;
+
+      const card = event.target.closest(".task-card");
+      if (card) {
+        enterEditMode(card.querySelector("[data-task-text]"));
+        return;
+      }
+
+      const heading = event.target.closest(".custom-group__heading");
+      if (heading) {
+        enterEditMode(heading.querySelector("[data-group-name]"));
+      }
+    });
+
     app.addEventListener("keydown", (event) => {
       const groupName = event.target.closest("[data-group-name]");
       if (groupName && event.key === "Enter") {
@@ -682,6 +1027,27 @@
     });
 
     app.addEventListener("click", (event) => {
+      const selectableCard = event.target.closest(".task-card");
+      if (selectableCard && !event.target.closest("button, input, textarea")) {
+        if (event.metaKey || event.ctrlKey) {
+          toggleTaskSelection(selectableCard.dataset.taskId);
+          return;
+        }
+        if (event.shiftKey) {
+          selectTaskRange(selectableCard.dataset.taskId);
+          return;
+        }
+        clearSelection();
+      } else if (!selectableCard) {
+        clearSelection();
+      }
+
+      const collapseButton = event.target.closest(".custom-group__toggle");
+      if (collapseButton) {
+        toggleGroupCollapse(collapseButton.closest(".custom-group").dataset.groupId);
+        return;
+      }
+
       const moveButton = event.target.closest(".task-card__move");
       if (moveButton) {
         openMoveActionModal(moveButton.closest(".task-card").dataset.taskId);
@@ -726,9 +1092,31 @@
       if (!card || event.target.closest("input, button")) return;
       draggedTaskId = card.dataset.taskId;
       taskDropCommitted = false;
-      card.classList.add("task-card--dragging");
+
+      // Drag the whole selection together when the dragged card is part of it.
+      if (selectedTaskIds.has(draggedTaskId) && selectedTaskIds.size > 1) {
+        const selectedIds = selectedTaskIds;
+        draggedTaskIds = getVisibleTaskCards().map((c) => c.dataset.taskId).filter((id) => selectedIds.has(id));
+      } else {
+        clearSelection();
+        draggedTaskIds = [draggedTaskId];
+      }
+
+      draggedTaskIds.forEach((id) => {
+        app.querySelector(`[data-task-id="${id}"]`)?.classList.add("task-card--dragging");
+      });
+
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("text/plain", draggedTaskId);
+
+      if (draggedTaskIds.length > 1) {
+        const badge = document.createElement("div");
+        badge.className = "drag-count-badge";
+        badge.textContent = String(draggedTaskIds.length);
+        document.body.appendChild(badge);
+        event.dataTransfer.setDragImage(badge, -12, -12);
+        setTimeout(() => badge.remove(), 0);
+      }
     });
 
     app.addEventListener("dragend", (event) => {
@@ -743,10 +1131,13 @@
         return;
       }
 
-      event.target.closest(".task-card")?.classList.remove("task-card--dragging");
+      draggedTaskIds.forEach((id) => {
+        app.querySelector(`[data-task-id="${id}"]`)?.classList.remove("task-card--dragging");
+      });
       stopDragScroll();
       if (!taskDropCommitted) renderTasks();
       draggedTaskId = null;
+      draggedTaskIds = [];
     });
 
     app.addEventListener("dragover", (event) => {
@@ -804,6 +1195,9 @@
     if (e.target.matches("[data-close-group-delete]")) {
       closeGroupDeleteModal();
     }
+    if (e.target.matches("[data-close-tab-delete]")) {
+      closeTabDeleteModal();
+    }
     if (e.target.matches("[data-close-move-action]")) {
       closeMoveActionModal();
     }
@@ -822,8 +1216,14 @@
     if (e.key === "Escape" && groupDeleteModal && !groupDeleteModal.hidden) {
       closeGroupDeleteModal();
     }
+    if (e.key === "Escape" && tabDeleteModal && !tabDeleteModal.hidden) {
+      closeTabDeleteModal();
+    }
     if (e.key === "Escape" && moveActionModal && !moveActionModal.hidden) {
       closeMoveActionModal();
+    }
+    if (e.key === "Escape" && selectedTaskIds.size) {
+      clearSelection();
     }
   });
 
@@ -942,6 +1342,9 @@
   updateClock();
   setInterval(updateClock, 1000);
   applyTheme(getThemePreference());
+  if (!tabs.some((tab) => tab.id === activeTabId)) activeTabId = DEFAULT_TAB_ID;
+  renderTabs();
+  updateCanvasVisibility();
   renderGroups();
   renderTasks();
   initClouds();
