@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nimbus</title>
   <meta name="theme-color" content="#7ec0ee" />
-  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01.49" />
-  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01.49" />
-  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01.49" />
-  <link rel="stylesheet" href="styles.css?v=2026.09.01.49" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.01.50" />
+  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.01.50" />
+  <link rel="manifest" href="manifest.webmanifest?v=2026.09.01.50" />
+  <link rel="stylesheet" href="styles.css?v=2026.09.01.50" />
   <script>
     // Set theme class before first paint to prevent flash
     try {
@@ -263,7 +263,7 @@
   <main class="app">
     <header class="app__header">
       <div class="brand">
-        <img class="brand__mark" src="icon.svg?v=2026.09.01.49" alt="Nimbus icon" width="56" height="56" />
+        <img class="brand__mark" src="icon.svg?v=2026.09.01.50" alt="Nimbus icon" width="56" height="56" />
         <div class="brand__text">
           <h1 class="app__title">Nimbus</h1>
           <p class="app__subtitle">Chart your course, one day at a time.</p>
@@ -278,10 +278,14 @@
       </div>
     </header>
 
+    <nav class="tab-bar" id="tab-bar" aria-label="Tabs"></nav>
+
     <section class="todo-group" aria-label="To-do actions">
       <div class="todo-group__actions">
         <button class="todo-group__add" id="add-todo-btn" type="button">Add Action</button>
         <button class="todo-group__add" id="add-group-btn" type="button">Add Group</button>
+        <button class="todo-group__add" id="collapse-all-btn" type="button">Collapse All</button>
+        <button class="todo-group__add" id="expand-all-btn" type="button">Expand All</button>
       </div>
       <div class="task-list" data-list="unassigned" aria-label="Unassigned to-dos"></div>
     </section>
@@ -377,6 +381,21 @@
     </div>
   </div>
 
+  <div class="modal" id="tab-delete-modal" hidden>
+    <div class="modal__backdrop" data-close-tab-delete></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="tab-delete-title">
+      <div class="modal__header">
+        <h2 class="modal__title" id="tab-delete-title">Delete tab</h2>
+        <button type="button" class="modal__close" data-close-tab-delete aria-label="Close dialog">&times;</button>
+      </div>
+      <p class="group-delete__message" id="tab-delete-message"></p>
+      <div class="todo-form__actions">
+        <button class="btn btn--secondary" type="button" data-close-tab-delete>Cancel</button>
+        <button class="btn btn--danger" id="delete-tab-btn" type="button">Delete tab</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal" id="group-delete-modal" hidden>
     <div class="modal__backdrop" data-close-group-delete></div>
     <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="group-delete-title">
@@ -443,6 +462,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=2026.09.01.49"></script>
+  <script src="app.js?v=2026.09.01.50"></script>
 </body>
 </html>
