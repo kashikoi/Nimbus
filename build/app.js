@@ -1186,7 +1186,7 @@
 
     tabBar.addEventListener("dragstart", (event) => {
       const chip = event.target.closest(".tab-bar__tab");
-      if (!chip || !chip.draggable || event.target.closest("input, button")) return;
+      if (!chip || !chip.draggable || event.target.closest("button")) return;
       draggedTabId = chip.dataset.tabId;
       tabDropCommitted = false;
       chip.classList.add("tab-bar__tab--dragging");
