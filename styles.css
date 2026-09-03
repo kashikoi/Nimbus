@@ -1166,6 +1166,9 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal[hidden] {
@@ -1185,6 +1188,9 @@ body {
   background: #ffffff;
   width: 100%;
   max-width: 440px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: 20px;
   box-shadow: 0 20px 48px rgba(10, 25, 45, 0.25);
   padding: 24px;
@@ -1372,6 +1378,23 @@ body {
   overflow-wrap: anywhere;
 }
 
+.cloud-remember-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: -2px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.cloud-remember-option input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
 .cloud-data-status {
   min-height: 18px;
   margin: -2px 0 0;
@@ -1542,14 +1565,29 @@ body {
   }
 
   .modal {
-    align-items: flex-end;
-    padding: 0;
+    align-items: flex-start;
+    justify-content: center;
+    padding: calc(12px + env(safe-area-inset-top)) 10px calc(18px + env(safe-area-inset-bottom));
   }
 
   .modal__card {
     max-width: none;
-    border-radius: 18px 18px 0 0;
+    max-height: calc(100dvh - 30px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    border-radius: 18px;
     padding: 22px 18px calc(22px + env(safe-area-inset-bottom));
+  }
+
+  .settings-actions--compact .btn {
+    flex-basis: 100%;
+    min-height: 44px;
+  }
+
+  .cloud-data-field__input,
+  .cloud-phrase-entry__toggle,
+  .modal input,
+  .modal select,
+  .modal textarea {
+    font-size: 16px;
   }
 
   .move-action-list {
