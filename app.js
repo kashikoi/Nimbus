@@ -882,9 +882,12 @@
     saturday.setDate(now.getDate() - ((now.getDay() + 1) % 7));
 
     WEEKDAYS.forEach((day, index) => {
-      const date = new Date(saturday);
-      date.setDate(saturday.getDate() + index);
-      const dateLabel = date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+      const currentWeekDate = new Date(saturday);
+      currentWeekDate.setDate(saturday.getDate() + index);
+      const nextWeekDate = new Date(currentWeekDate);
+      nextWeekDate.setDate(currentWeekDate.getDate() + 7);
+      const dateFormat = { month: "short", day: "numeric" };
+      const dateLabel = `${currentWeekDate.toLocaleDateString(undefined, dateFormat)} | ${nextWeekDate.toLocaleDateString(undefined, dateFormat)}`;
       const dateElement = document.querySelector(`[data-date-for="${day}"]`);
       if (dateElement) dateElement.textContent = dateLabel;
 
