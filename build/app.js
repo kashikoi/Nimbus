@@ -15,6 +15,7 @@
   const importDataBtn = document.getElementById("import-data-btn");
   const importFileInput = document.getElementById("import-file-input");
   const cloudPhraseInput = document.getElementById("cloud-phrase");
+  const rememberCloudPhraseInput = document.getElementById("remember-cloud-phrase");
   const toggleCloudPhraseBtn = document.getElementById("toggle-cloud-phrase-btn");
   const generateCloudPhraseBtn = document.getElementById("generate-cloud-phrase-btn");
   const cloudPhraseOutput = document.getElementById("cloud-phrase-output");
@@ -55,6 +56,7 @@
   const CLOUD_SYNC_FORMAT = "kashikoi-encrypted-backup-v1";
   const LEGACY_CLOUD_SYNC_FORMAT = "nimbus-encrypted-backup-v1";
   const UNIFIED_BACKUP_SCHEMA = "kashikoi-app-backup-v1";
+  const REMEMBER_CLOUD_PHRASE_KEY = "nimbus.cloudPhrase";
   const CLOUD_KDF_ITERATIONS = 600000;
   const RECOVERY_PHRASE_WORD_COUNT = 16;
   const RECOVERY_WORDS = [
@@ -1206,6 +1208,24 @@
     cloudPhraseOutput.textContent = phrase ? phrase : "";
   }
 
+  function saveRememberedCloudPhrase() {
+    if (!rememberCloudPhraseInput) return;
+    if (rememberCloudPhraseInput.checked && getCloudPhrase()) {
+      localStorage.setItem(REMEMBER_CLOUD_PHRASE_KEY, getCloudPhrase());
+    } else if (!rememberCloudPhraseInput.checked) {
+      localStorage.removeItem(REMEMBER_CLOUD_PHRASE_KEY);
+    }
+  }
+
+  function loadRememberedCloudPhrase() {
+    if (!cloudPhraseInput || !rememberCloudPhraseInput) return;
+    const savedPhrase = localStorage.getItem(REMEMBER_CLOUD_PHRASE_KEY) || "";
+    if (!savedPhrase) return;
+    cloudPhraseInput.value = savedPhrase;
+    rememberCloudPhraseInput.checked = true;
+    setCloudDataStatus("Recovery phrase remembered on this device.", "info");
+  }
+
   async function loadCloudData() {
     const phrase = getCloudPhrase();
     if (!phrase) {
@@ -1421,6 +1441,7 @@
       const phrase = createRecoveryPhrase();
       if (cloudPhraseInput) cloudPhraseInput.value = phrase;
       updateCloudPhraseOutput(phrase);
+      saveRememberedCloudPhrase();
       setCloudDataStatus("Recovery phrase created. Save these words now. Nimbus cannot recover them.", "warn");
     });
   }
@@ -1435,10 +1456,19 @@
   if (cloudPhraseInput) {
     cloudPhraseInput.addEventListener("input", () => {
       updateCloudPhraseOutput("");
+      saveRememberedCloudPhrase();
       if (cloudDataDirty) setCloudDataStatus("Local changes are not saved to encrypted cloud sync yet.", "warn");
     });
     cloudPhraseInput.addEventListener("change", () => {
       cloudPhraseInput.value = getCloudPhrase();
+      saveRememberedCloudPhrase();
+    });
+  }
+  if (rememberCloudPhraseInput) {
+    loadRememberedCloudPhrase();
+    rememberCloudPhraseInput.addEventListener("change", () => {
+      saveRememberedCloudPhrase();
+      setCloudDataStatus(rememberCloudPhraseInput.checked ? "Recovery phrase will be remembered on this device." : "Recovery phrase removed from this device.", "info");
     });
   }
   if (cloudLoadDataBtn) cloudLoadDataBtn.addEventListener("click", loadCloudData);
