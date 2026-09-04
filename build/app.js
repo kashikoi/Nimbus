@@ -937,14 +937,15 @@
   }
   renderCalendar();
 
-  // Line the calendar panel's top edge up with the tab bar when the page is scrolled to the top.
+  // Line the calendar panel's top edge up with the tab bar when the page is
+  // scrolled to the top; it stays fixed in place while scrolling after that.
   function alignCalendarPanel() {
     const panel = document.getElementById("calendar-panel");
     if (!panel || !tabBar) return;
-    panel.style.marginTop = "0px";
+    panel.style.top = "40px";
     if (getComputedStyle(panel).display === "none") return;
-    const offset = tabBar.offsetTop - panel.offsetTop;
-    if (offset > 0) panel.style.marginTop = `${offset}px`;
+    const tabTop = tabBar.getBoundingClientRect().top + window.scrollY;
+    panel.style.top = `${tabTop}px`;
   }
   alignCalendarPanel();
   window.addEventListener("resize", alignCalendarPanel);
