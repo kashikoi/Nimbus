@@ -324,7 +324,14 @@
         moveButton.textContent = "Move";
         moveButton.setAttribute("aria-label", `Move ${task.text || "action"}`);
 
-        card.append(text, moveButton, deleteButton, check);
+        const duplicateButton = document.createElement("button");
+        duplicateButton.className = "task-card__duplicate";
+        duplicateButton.type = "button";
+        duplicateButton.textContent = "⧉";
+        duplicateButton.title = "Duplicate to-do";
+        duplicateButton.setAttribute("aria-label", `Duplicate ${task.text || "action"}`);
+
+        card.append(text, moveButton, duplicateButton, deleteButton, check);
         list.appendChild(card);
         fitActionHeight(text);
       });
@@ -365,6 +372,16 @@
     saveTasks();
     renderTasks();
     focusEditable(`[data-task-text="${id}"]`);
+  }
+
+  function duplicateTask(taskId) {
+    const index = tasks.findIndex((task) => task.id === taskId);
+    if (index === -1) return;
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const duplicate = { ...tasks[index], id, done: false };
+    tasks.splice(index + 1, 0, duplicate);
+    saveTasks();
+    renderTasks();
   }
 
   function updateCanvasVisibility() {
@@ -1750,6 +1767,11 @@
       const moveButton = event.target.closest(".task-card__move");
       if (moveButton) {
         openMoveActionModal(moveButton.closest(".task-card").dataset.taskId);
+        return;
+      }
+      const duplicateButton = event.target.closest(".task-card__duplicate");
+      if (duplicateButton) {
+        duplicateTask(duplicateButton.closest(".task-card").dataset.taskId);
         return;
       }
       const groupConvertButton = event.target.closest(".custom-group__convert");
