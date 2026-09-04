@@ -880,21 +880,75 @@
   function updateWeekDates(now) {
     const saturday = new Date(now);
     saturday.setDate(now.getDate() - ((now.getDay() + 1) % 7));
+    const todayIndex = (now.getDay() + 1) % 7;
 
     WEEKDAYS.forEach((day, index) => {
-      const currentWeekDate = new Date(saturday);
-      currentWeekDate.setDate(saturday.getDate() + index);
-      const nextWeekDate = new Date(currentWeekDate);
-      nextWeekDate.setDate(currentWeekDate.getDate() + 7);
+      // From today onward show this week's date; prior days show next week's.
+      const shownDate = new Date(saturday);
+      shownDate.setDate(saturday.getDate() + index + (index < todayIndex ? 7 : 0));
       const dateFormat = { month: "short", day: "numeric" };
-      const dateLabel = `${currentWeekDate.toLocaleDateString(undefined, dateFormat)} | ${nextWeekDate.toLocaleDateString(undefined, dateFormat)}`;
       const dateElement = document.querySelector(`[data-date-for="${day}"]`);
-      if (dateElement) dateElement.textContent = dateLabel;
+      if (dateElement) dateElement.textContent = shownDate.toLocaleDateString(undefined, dateFormat);
 
       const group = document.querySelector(`.day-group[data-day="${day}"]`);
-      if (group) group.classList.toggle("day-group--today", day === WEEKDAYS[(now.getDay() + 1) % 7]);
+      if (group) group.classList.toggle("day-group--today", day === WEEKDAYS[todayIndex]);
     });
   }
+
+  // Side panel: a simple calendar (shown on wide viewports) — just the month
+  // grid with today highlighted and prev/next navigation, nothing more.
+  let calendarDate = new Date();
+  const calGridEl = document.getElementById("cal-grid");
+  const calTitleEl = document.getElementById("cal-title");
+  document.getElementById("cal-prev").addEventListener("click", () => {
+    calendarDate.setMonth(calendarDate.getMonth() - 1);
+    renderCalendar();
+  });
+  document.getElementById("cal-next").addEventListener("click", () => {
+    calendarDate.setMonth(calendarDate.getMonth() + 1);
+    renderCalendar();
+  });
+
+  function renderCalendar() {
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    calTitleEl.textContent = calendarDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+    const firstWeekday = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+    const cells = [];
+    for (let i = firstWeekday - 1; i >= 0; i--) cells.push({ day: daysInPrevMonth - i, muted: true });
+    for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, today: isCurrentMonth && d === today.getDate() });
+    let nextDay = 1;
+    while (cells.length % 7 !== 0) cells.push({ day: nextDay++, muted: true });
+
+    calGridEl.innerHTML = cells
+      .map((c) => {
+        let cls = "calendar__day";
+        if (c.muted) cls += " calendar__day--muted";
+        if (c.today) cls += " calendar__day--today";
+        return `<div class="${cls}" data-day="${c.day}">${c.day}</div>`;
+      })
+      .join("");
+  }
+  renderCalendar();
+
+  // Line the calendar panel's top edge up with the tab bar when the page is scrolled to the top.
+  function alignCalendarPanel() {
+    const panel = document.getElementById("calendar-panel");
+    if (!panel || !tabBar) return;
+    panel.style.marginTop = "0px";
+    if (getComputedStyle(panel).display === "none") return;
+    const offset = tabBar.offsetTop - panel.offsetTop;
+    if (offset > 0) panel.style.marginTop = `${offset}px`;
+  }
+  alignCalendarPanel();
+  window.addEventListener("resize", alignCalendarPanel);
+  window.addEventListener("load", alignCalendarPanel);
 
   // Atmosphere / Theme Handling (Day, Twilight, Night, Random)
   const themePicker = document.getElementById("theme-picker");
