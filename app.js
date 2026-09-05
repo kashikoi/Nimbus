@@ -592,18 +592,17 @@
     renderTasks();
   }
 
-  function printGroupActions(groupId) {
-    const group = groups.find((item) => item.id === groupId);
-    if (!group || !printArea) return;
-    const groupTasks = tasks.filter((task) => (task.day || "unassigned") === groupId && task.tabId === group.tabId);
+  function printActionsForLocation(location, label, tabId) {
+    if (!printArea) return;
+    const locationTasks = tasks.filter((task) => (task.day || "unassigned") === location && task.tabId === tabId);
 
     printArea.replaceChildren();
     const heading = document.createElement("div");
     heading.className = "print-area__heading";
-    heading.textContent = group.name || "Group";
+    heading.textContent = label;
     printArea.appendChild(heading);
 
-    groupTasks.forEach((task) => {
+    locationTasks.forEach((task) => {
       const line = document.createElement("p");
       line.className = "print-area__line";
       line.textContent = task.text || "";
@@ -611,6 +610,17 @@
     });
 
     window.print();
+  }
+
+  function printGroupActions(groupId) {
+    const group = groups.find((item) => item.id === groupId);
+    if (!group) return;
+    printActionsForLocation(groupId, group.name || "Group", group.tabId);
+  }
+
+  function printDayActions(day) {
+    const label = day[0].toUpperCase() + day.slice(1);
+    printActionsForLocation(day, label, DEFAULT_TAB_ID);
   }
 
   function deleteGroup(moveTasks) {
@@ -1811,6 +1821,11 @@
       const groupPrintButton = event.target.closest(".custom-group__print");
       if (groupPrintButton) {
         printGroupActions(groupPrintButton.closest(".custom-group").dataset.groupId);
+        return;
+      }
+      const dayPrintButton = event.target.closest(".day-group__print");
+      if (dayPrintButton) {
+        printDayActions(dayPrintButton.closest(".day-group").dataset.day);
         return;
       }
       const groupDeleteButton = event.target.closest(".custom-group__delete");
