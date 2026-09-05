@@ -672,6 +672,8 @@ body {
 }
 
 .day-group__title {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   font-size: 1rem;
   font-weight: 700;
