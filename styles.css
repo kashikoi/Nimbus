@@ -940,6 +940,7 @@ body {
 }
 
 .custom-group__convert,
+.custom-group__print,
 .custom-group__delete {
   width: 28px;
   height: 28px;
@@ -969,6 +970,18 @@ body {
   opacity: 1;
 }
 
+.custom-group__print:hover {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+  opacity: 1;
+}
+
+.custom-group__print:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
 .custom-group__delete:hover {
   background: color-mix(in srgb, var(--danger) 16%, transparent);
   color: var(--danger);
@@ -979,6 +992,47 @@ body {
   outline: 2px solid color-mix(in srgb, var(--danger) 70%, transparent);
   outline-offset: 2px;
   opacity: 1;
+}
+
+.print-area {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0.5in;
+    background: #fff;
+    color: #000;
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  .print-area__heading {
+    margin: 0 0 1em 0;
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .print-area__line {
+    margin: 0 0 1.2em 0;
+    color: #000;
+    font-size: 1rem;
+  }
 }
 
 .task-list {
