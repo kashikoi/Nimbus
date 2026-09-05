@@ -50,6 +50,7 @@
   const deleteGroupTasksBtn = document.getElementById("delete-group-tasks-btn");
   const moveActionModal = document.getElementById("move-action-modal");
   const moveActionList = document.getElementById("move-action-list");
+  const printArea = document.getElementById("print-area");
   const WEEKDAYS = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
   const DEFAULT_TAB_ID = "tab-default";
   const CLOUD_SYNC_ENDPOINT = "https://nimbus-sync.nimbus-sync.workers.dev";
@@ -260,6 +261,13 @@
       convertButton.title = "Convert to tab";
       convertButton.setAttribute("aria-label", `Convert ${group.name || "group"} to a tab`);
 
+      const printButton = document.createElement("button");
+      printButton.className = "custom-group__print";
+      printButton.type = "button";
+      printButton.textContent = "🖨";
+      printButton.title = "Print group actions";
+      printButton.setAttribute("aria-label", `Print actions in ${group.name || "group"}`);
+
       const deleteButton = document.createElement("button");
       deleteButton.className = "custom-group__delete";
       deleteButton.type = "button";
@@ -267,7 +275,7 @@
       deleteButton.title = "Delete group";
       deleteButton.setAttribute("aria-label", `Delete ${group.name || "group"}`);
 
-      heading.append(collapseButton, title, convertButton, deleteButton);
+      heading.append(collapseButton, title, convertButton, printButton, deleteButton);
 
       const list = document.createElement("div");
       list.className = "task-list";
@@ -582,6 +590,27 @@
     updateCanvasVisibility();
     renderGroups();
     renderTasks();
+  }
+
+  function printGroupActions(groupId) {
+    const group = groups.find((item) => item.id === groupId);
+    if (!group || !printArea) return;
+    const groupTasks = tasks.filter((task) => (task.day || "unassigned") === groupId && task.tabId === group.tabId);
+
+    printArea.replaceChildren();
+    const heading = document.createElement("div");
+    heading.className = "print-area__heading";
+    heading.textContent = group.name || "Group";
+    printArea.appendChild(heading);
+
+    groupTasks.forEach((task) => {
+      const line = document.createElement("p");
+      line.className = "print-area__line";
+      line.textContent = task.text || "";
+      printArea.appendChild(line);
+    });
+
+    window.print();
   }
 
   function deleteGroup(moveTasks) {
@@ -1777,6 +1806,11 @@
       const groupConvertButton = event.target.closest(".custom-group__convert");
       if (groupConvertButton) {
         convertGroupToTab(groupConvertButton.closest(".custom-group").dataset.groupId);
+        return;
+      }
+      const groupPrintButton = event.target.closest(".custom-group__print");
+      if (groupPrintButton) {
+        printGroupActions(groupPrintButton.closest(".custom-group").dataset.groupId);
         return;
       }
       const groupDeleteButton = event.target.closest(".custom-group__delete");
