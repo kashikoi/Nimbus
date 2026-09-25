@@ -698,7 +698,17 @@
     saveTasks();
   }
 
+  let taskShuffleAnimations = [];
+
+  function settleTaskShuffle() {
+    // Finish in-flight FLIP animations so getBoundingClientRect reads the settled
+    // layout instead of a mid-animation transform (prevents drag reorder flicker).
+    taskShuffleAnimations.forEach((animation) => animation.finish());
+    taskShuffleAnimations = [];
+  }
+
   function animateTaskShuffle(reorder) {
+    settleTaskShuffle();
     const positions = new Map(
       [...app.querySelectorAll(".task-card:not(.task-card--dragging)")]
         .map((card) => [card, card.getBoundingClientRect()])
@@ -710,13 +720,17 @@
       const after = card.getBoundingClientRect();
       const deltaY = before.top - after.top;
       if (!deltaY) return;
-      card.animate(
+      const animation = card.animate(
         [
           { transform: `translateY(${deltaY}px)` },
           { transform: "translateY(0)" },
         ],
         { duration: 220, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" }
       );
+      taskShuffleAnimations.push(animation);
+      animation.addEventListener("finish", () => {
+        taskShuffleAnimations = taskShuffleAnimations.filter((item) => item !== animation);
+      });
     });
   }
 
@@ -806,21 +820,36 @@
     saveTabs();
   }
 
-  function reorderDraggingCard(list, target, clientY) {
-    const draggedCard = app.querySelector(`[data-task-id="${draggedTaskId}"]`);
-    if (!draggedCard || target === draggedCard) return;
+  function getDragAfterCard(list, clientY) {
+    // Settle animations first so midpoints reflect final positions, not transforms.
+    settleTaskShuffle();
+    let closest = null;
+    let closestOffset = Number.NEGATIVE_INFINITY;
+    list.querySelectorAll(".task-card:not(.task-card--dragging)").forEach((card) => {
+      const box = card.getBoundingClientRect();
+      const offset = clientY - box.top - box.height / 2;
+      if (offset < 0 && offset > closestOffset) {
+        closestOffset = offset;
+        closest = card;
+      }
+    });
+    return closest;
+  }
 
-    if (!target) {
+  function reorderDraggingCard(list, clientY) {
+    const draggedCard = app.querySelector(`[data-task-id="${draggedTaskId}"]`);
+    if (!draggedCard) return;
+
+    const afterCard = getDragAfterCard(list, clientY);
+    if (afterCard === draggedCard) return;
+
+    if (!afterCard) {
       if (draggedCard.parentElement === list && draggedCard.nextElementSibling === null) return;
       animateTaskShuffle(() => list.appendChild(draggedCard));
       return;
     }
-
-    const targetBounds = target.getBoundingClientRect();
-    const insertAfter = clientY > targetBounds.top + targetBounds.height / 2;
-    const reference = insertAfter ? target.nextSibling : target;
-    if (reference === draggedCard || target.nextElementSibling === draggedCard && insertAfter) return;
-    animateTaskShuffle(() => list.insertBefore(draggedCard, reference));
+    if (draggedCard.parentElement === list && draggedCard.nextElementSibling === afterCard) return;
+    animateTaskShuffle(() => list.insertBefore(draggedCard, afterCard));
   }
 
   function moveTask(location) {
@@ -1949,6 +1978,7 @@
       });
       stopDragScroll();
       stopTabDragScroll();
+      settleTaskShuffle();
       if (!taskDropCommitted) renderTasks();
       draggedTaskId = null;
       draggedTaskIds = [];
@@ -1968,7 +1998,7 @@
       if (!list || !draggedTaskId) return;
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
-      reorderDraggingCard(list, event.target.closest(".task-card"), event.clientY);
+      reorderDraggingCard(list, event.clientY);
     });
 
     app.addEventListener("drop", (event) => {
@@ -1983,7 +2013,10 @@
         return;
       }
 
-      const list = event.target.closest(".task-list");
+      const draggedCard = app.querySelector(`[data-task-id="${draggedTaskId}"]`);
+      // Fall back to the card's current list so a drop still commits even when
+      // released just outside a task-list (it was already positioned on dragover).
+      const list = event.target.closest(".task-list") || draggedCard?.closest(".task-list");
       if (!list || !draggedTaskId) return;
       event.preventDefault();
       taskDropCommitted = true;
