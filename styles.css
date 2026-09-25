@@ -1246,6 +1246,14 @@ body {
   cursor: pointer;
 }
 
+/* Touch devices get the desktop layout but still need Move: HTML5 drag needs a mouse. */
+@media (pointer: coarse) {
+  .task-card__move {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
 .task-card__duplicate {
   width: 28px;
   height: 28px;
@@ -1681,7 +1689,7 @@ body {
   font-size: 0.92rem;
 }
 
-@media (max-width: 720px), (pointer: coarse) {
+@media (max-width: 720px) {
   body {
     padding: 20px 12px calc(32px + env(safe-area-inset-bottom));
   }
