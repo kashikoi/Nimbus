@@ -1845,6 +1845,20 @@
         event.preventDefault();
         groupName.blur();
       }
+
+      const taskText = event.target.closest("[data-task-text]");
+      if (taskText && event.key === "Enter" && !taskText.readOnly) {
+        if (event.shiftKey) return;
+        if (event.altKey || event.metaKey || event.ctrlKey) {
+          // Browsers don't insert a newline for these combos, so do it manually.
+          event.preventDefault();
+          taskText.setRangeText("\n", taskText.selectionStart, taskText.selectionEnd, "end");
+          fitActionHeight(taskText);
+          return;
+        }
+        event.preventDefault();
+        taskText.blur();
+      }
     });
 
     app.addEventListener("click", (event) => {
