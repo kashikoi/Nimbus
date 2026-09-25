@@ -311,6 +311,11 @@
         if (!existingIds.has(id)) selectedTaskIds.delete(id);
       });
     }
+    // Emptying every list shrinks the page, which makes the browser clamp the
+    // scroll offset; hold the old height until the rebuild is done.
+    const scrollY = window.scrollY;
+    const previousMinHeight = app.style.minHeight;
+    app.style.minHeight = `${app.getBoundingClientRect().height}px`;
     app.querySelectorAll(".task-list").forEach((list) => {
       list.replaceChildren();
       const location = list.dataset.list;
@@ -365,6 +370,8 @@
       }
     });
     syncCustomGroupListStates();
+    app.style.minHeight = previousMinHeight;
+    if (window.scrollY !== scrollY) window.scrollTo({ top: scrollY, behavior: "instant" });
   }
 
   function openTodoModal() {
