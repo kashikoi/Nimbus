@@ -1354,7 +1354,8 @@
   }
 
   async function fetchEncryptedBackupAtKey(syncKey) {
-    const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/sync/${syncKey}`, { cache: "no-store" });
+    // iOS Safari ignores cache: "no-store" here and replays a stale backup, so vary the URL.
+    const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/sync/${syncKey}?t=${Date.now()}-${Math.random().toString(36).slice(2)}`, { cache: "no-store" });
     if (response.status === 404) return null;
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
