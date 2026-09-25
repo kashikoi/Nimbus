@@ -92,6 +92,7 @@
   let tabDragScrollFrame = null;
   let selectedTaskIds = new Set();
   let selectionAnchorId = null;
+  let lastDeletedTask = null;
   let tabs = loadTabs();
   let activeTabId = loadActiveTabId();
   if (!tabs.some((tab) => tab.id === activeTabId)) activeTabId = DEFAULT_TAB_ID;
@@ -220,8 +221,23 @@
     if (!group) return;
     group.collapsed = !Boolean(group.collapsed);
     saveGroups();
-    renderGroups();
-    renderTasks();
+
+    // Update the single group in place so the page doesn't reflow/jump on toggle.
+    const section = customGroups?.querySelector(`.custom-group[data-group-id="${groupId}"]`);
+    if (!section) {
+      renderGroups();
+      renderTasks();
+      return;
+    }
+    section.classList.toggle("custom-group--collapsed", group.collapsed);
+    const collapseButton = section.querySelector(".custom-group__toggle");
+    if (collapseButton) {
+      collapseButton.textContent = group.collapsed ? "▸" : "▾";
+      collapseButton.title = group.collapsed ? "Expand group" : "Collapse group";
+      collapseButton.setAttribute("aria-label", `${group.collapsed ? "Expand" : "Collapse"} ${group.name || "group"}`);
+      collapseButton.setAttribute("aria-expanded", String(!group.collapsed));
+    }
+    syncCustomGroupListState(section.querySelector(".task-list"), group.collapsed);
   }
 
   function renderGroups() {
@@ -370,6 +386,7 @@
   function enterEditMode(field) {
     if (!field) return;
     field.readOnly = false;
+    field.closest(".task-card")?.setAttribute("draggable", "false");
     field.focus();
     field.select();
   }
@@ -388,6 +405,19 @@
     const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const duplicate = { ...tasks[index], id, done: false };
     tasks.splice(index + 1, 0, duplicate);
+    saveTasks();
+    renderTasks();
+  }
+
+  function undoLastDelete() {
+    if (!lastDeletedTask) return;
+    if (tasks.some((task) => task.id === lastDeletedTask.task.id)) {
+      lastDeletedTask = null;
+      return;
+    }
+    const index = Math.min(lastDeletedTask.index, tasks.length);
+    tasks.splice(index, 0, lastDeletedTask.task);
+    lastDeletedTask = null;
     saveTasks();
     renderTasks();
   }
@@ -1742,6 +1772,7 @@
           saveTasks();
         }
         taskText.readOnly = true;
+        taskText.closest(".task-card")?.setAttribute("draggable", "true");
         return;
       }
 
@@ -1836,6 +1867,10 @@
       const deleteButton = event.target.closest(".task-card__delete");
       if (!deleteButton) return;
       const card = deleteButton.closest(".task-card");
+      const deletedIndex = tasks.findIndex((task) => task.id === card.dataset.taskId);
+      if (deletedIndex === -1) return;
+      lastDeletedTask = { task: tasks[deletedIndex], index: deletedIndex };
+      selectedTaskIds.delete(card.dataset.taskId);
       tasks = tasks.filter((task) => task.id !== card.dataset.taskId);
       saveTasks();
       card.remove();
@@ -1986,6 +2021,14 @@
   });
 
   document.addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && (e.key === "z" || e.key === "Z")) {
+      const editingField = e.target.closest("input, textarea, [contenteditable='true']");
+      if (editingField) return;
+      if (!lastDeletedTask) return;
+      e.preventDefault();
+      undoLastDelete();
+      return;
+    }
     if (e.key === "Escape" && settingsModal && !settingsModal.hidden) {
       closeSettings();
     }
