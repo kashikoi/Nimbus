@@ -1601,6 +1601,12 @@
   // Event Listeners
   if (settingsBtn) settingsBtn.addEventListener("click", openSettings);
   if (aboutBtn) aboutBtn.addEventListener("click", openAbout);
+  // Mirror the About version into the header badge so there's only one place to bump each release.
+  (() => {
+    const src = document.querySelector(".about-content__version");
+    const badge = document.getElementById("app-version");
+    if (src && badge) badge.textContent = src.textContent.replace(/^Version\s+/i, "v");
+  })();
   if (themePicker) {
     themePicker.addEventListener("click", (e) => {
       const chip = e.target.closest(".theme-chip");
