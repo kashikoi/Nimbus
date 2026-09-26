@@ -387,6 +387,15 @@ body {
   font-weight: 500;
 }
 
+.app__version {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #5a7597;
+  -webkit-text-fill-color: #5a7597;
+  vertical-align: middle;
+}
+
 .app__datetime {
   display: flex;
   flex-direction: column;
@@ -2045,6 +2054,13 @@ html.dark .app__title {
   background: linear-gradient(135deg, #f0f6ff 0%, #b8d4f8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+html.night .app__version,
+html.dark .app__version,
+html.twilight .app__version {
+  color: #93a9c8;
+  -webkit-text-fill-color: #93a9c8;
 }
 
 html.night .app__canvas,
