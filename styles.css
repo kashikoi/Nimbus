@@ -363,7 +363,6 @@ body {
   backdrop-filter: blur(16px) saturate(1.2);
   -webkit-backdrop-filter: blur(16px) saturate(1.2);
   box-shadow: 0 12px 30px rgba(60, 100, 150, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* Header */

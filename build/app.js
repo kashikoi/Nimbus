@@ -170,6 +170,16 @@
     textarea.style.height = `${textarea.scrollHeight}px`;
   }
 
+  // Grow the textarea and, if it lives in an expanded custom group, grow that
+  // group's pinned max-height too so added lines aren't clipped until refresh.
+  function growActionField(textarea) {
+    fitActionHeight(textarea);
+    const list = textarea.closest(".custom-group .task-list");
+    if (list && !list.classList.contains("task-list--collapsed")) {
+      list.style.maxHeight = `${list.scrollHeight}px`;
+    }
+  }
+
   function loadGroups() {
     try {
       const savedGroups = JSON.parse(localStorage.getItem("nimbus.groups") || "[]");
@@ -1813,7 +1823,7 @@
   if (app) {
     app.addEventListener("input", (event) => {
       const taskText = event.target.closest("[data-task-text]");
-      if (taskText) fitActionHeight(taskText);
+      if (taskText) growActionField(taskText);
     });
 
     app.addEventListener("focusout", (event) => {
@@ -1870,7 +1880,7 @@
           // Browsers don't insert a newline for these combos, so do it manually.
           event.preventDefault();
           taskText.setRangeText("\n", taskText.selectionStart, taskText.selectionEnd, "end");
-          fitActionHeight(taskText);
+          growActionField(taskText);
           return;
         }
         event.preventDefault();
