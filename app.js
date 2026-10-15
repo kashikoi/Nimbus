@@ -1671,6 +1671,16 @@
   if (addGroupBtn) addGroupBtn.addEventListener("click", addBlankGroup);
   if (collapseAllBtn) collapseAllBtn.addEventListener("click", () => setAllGroupsCollapsed(true));
   if (expandAllBtn) expandAllBtn.addEventListener("click", () => setAllGroupsCollapsed(false));
+
+  // Frost the sticky top bar once the page scrolls so content behind it is masked.
+  const topbar = document.getElementById("app-topbar");
+  if (topbar) {
+    const syncTopbarScrolled = () => {
+      topbar.classList.toggle("app__topbar--scrolled", window.scrollY > 4);
+    };
+    window.addEventListener("scroll", syncTopbarScrolled, { passive: true });
+    syncTopbarScrolled();
+  }
   if (todoForm) {
     todoForm.addEventListener("submit", (event) => {
       event.preventDefault();
