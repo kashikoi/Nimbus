@@ -6,10 +6,10 @@
   <meta name="viewport" content="width=1100" />
   <title>Nimbus</title>
   <meta name="theme-color" content="#7ec0ee" />
-  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.09.25.6" />
-  <link rel="apple-touch-icon" href="icon.svg?v=2026.09.25.6" />
-  <link rel="manifest" href="manifest.webmanifest?v=2026.09.25.6" />
-  <link rel="stylesheet" href="styles.css?v=2026.09.25.6" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg?v=2026.10.15.1" />
+  <link rel="apple-touch-icon" href="icon.svg?v=2026.10.15.1" />
+  <link rel="manifest" href="manifest.webmanifest?v=2026.10.15.1" />
+  <link rel="stylesheet" href="styles.css?v=2026.10.15.1" />
   <script>
     // Set theme class before first paint to prevent flash
     try {
@@ -297,32 +297,35 @@
   </aside>
 
   <main class="app">
-    <header class="app__header">
-      <div class="brand">
-        <img class="brand__mark" src="icon.svg?v=2026.09.25.6" alt="Nimbus icon" width="56" height="56" />
-        <div class="brand__text">
-          <h1 class="app__title">Nimbus <span class="app__version" id="app-version"></span></h1>
-          <p class="app__subtitle">Chart your course, one day at a time.</p>
+    <div class="app__topbar" id="app-topbar">
+      <header class="app__header">
+        <div class="brand">
+          <img class="brand__mark" src="icon.svg?v=2026.10.15.1" alt="Nimbus icon" width="56" height="56" />
+          <div class="brand__text">
+            <h1 class="app__title">Nimbus <span class="app__version" id="app-version"></span></h1>
+            <p class="app__subtitle">Chart your course, one day at a time.</p>
+          </div>
         </div>
-      </div>
-      <div class="app__datetime" id="app-datetime">
-        <div class="app__actions">
-          <button type="button" class="icon-btn" id="settings-btn" title="Settings" aria-label="Settings">&#9881;&#65039;</button>
+        <div class="app__datetime" id="app-datetime">
+          <div class="app__actions">
+            <button type="button" class="icon-btn" id="settings-btn" title="Settings" aria-label="Settings">&#9881;&#65039;</button>
+          </div>
+          <div class="app__date" id="app-date"></div>
+          <div class="app__time" id="app-time"></div>
         </div>
-        <div class="app__date" id="app-date"></div>
-        <div class="app__time" id="app-time"></div>
-      </div>
-    </header>
+      </header>
 
-    <nav class="tab-bar" id="tab-bar" aria-label="Tabs"></nav>
+      <nav class="tab-bar" id="tab-bar" aria-label="Tabs"></nav>
 
-    <section class="todo-group" aria-label="To-do actions">
-      <div class="todo-group__actions">
+      <div class="todo-group__actions" aria-label="To-do actions">
         <button class="todo-group__add" id="add-todo-btn" type="button">Add Action</button>
         <button class="todo-group__add" id="add-group-btn" type="button">Add Group</button>
         <button class="todo-group__add" id="collapse-all-btn" type="button">Collapse All</button>
         <button class="todo-group__add" id="expand-all-btn" type="button">Expand All</button>
       </div>
+    </div>
+
+    <section class="todo-group" aria-label="To-dos">
       <div class="task-list" data-list="unassigned" aria-label="Unassigned to-dos"></div>
     </section>
 
@@ -550,7 +553,7 @@
       </div>
       <div class="about-content">
         <p class="about-content__name">Nimbus</p>
-        <p class="about-content__version">Version 2026.09.25.6</p>
+        <p class="about-content__version">Version 2026.10.15.1</p>
         <p class="about-content__description">A local-first weekly planner for charting your course, one day at a time.</p>
       </div>
     </div>
@@ -558,6 +561,6 @@
 
   <div id="print-area" class="print-area" aria-hidden="true"></div>
 
-  <script src="app.js?v=2026.09.25.6"></script>
+  <script src="app.js?v=2026.10.15.1"></script>
 </body>
 </html>
