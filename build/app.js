@@ -1804,13 +1804,15 @@
 
     tabBar.addEventListener("drop", (event) => {
       const target = event.target.closest(".tab-bar__tab");
-      if (!target) return;
       if (draggedTaskId) {
+        if (!target) return;
         event.preventDefault();
         taskDropCommitted = true;
         moveTasksToTab(target.dataset.tabId);
         return;
       }
+      // Tab reordering already happened in the DOM during dragover, so commit the
+      // new order on any drop within the tab bar even when released off a chip.
       if (!draggedTabId) return;
       stopTabDragScroll();
       event.preventDefault();
